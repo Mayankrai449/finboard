@@ -1,5 +1,7 @@
 'use client';
 
+import StatRow from './StatRow';
+
 interface StockData {
   symbol: string;
   companyName: string;
@@ -73,44 +75,27 @@ export default function StockCard({ stockData }: StockCardProps) {
 
           {/* Stats Section */}
           <div className="space-y-0 mb-6">
-            {[
-              { label: 'Open', value: `$${stockData.openPrice.toFixed(2)}` },
-              { label: 'High', value: `$${stockData.highPrice.toFixed(2)}` },
-              { label: 'Low', value: `$${stockData.lowPrice.toFixed(2)}` },
-              { label: 'Previous Close', value: `$${stockData.previousClose.toFixed(2)}` },
-            ].map((item, index) => (
-              <div key={item.label}>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-sm text-gray-400 font-medium">
-                    {item.label}
-                  </span>
-                  <span className="text-xl font-bold text-white">
-                    {item.value}
-                  </span>
-                </div>
-                {index < 3 && <div className="h-px bg-[#333]/30"></div>}
-              </div>
-            ))}
+            <StatRow label="Open" value={`$${stockData.openPrice.toFixed(2)}`} showDivider />
+            <StatRow label="High" value={`$${stockData.highPrice.toFixed(2)}`} showDivider />
+            <StatRow label="Low" value={`$${stockData.lowPrice.toFixed(2)}`} showDivider />
+            <StatRow label="Previous Close" value={`$${stockData.previousClose.toFixed(2)}`} />
           </div>
 
           {/* Info Section */}
           <div className="space-y-0 pt-6 border-t border-[#333]/30">
-            {[
-              { label: 'Industry', value: stockData.industry },
-              { label: 'Country', value: stockData.country },
-            ].map((item, index) => (
-              <div key={item.label}>
-                <div className="flex items-center justify-between py-4">
-                  <span className="text-sm text-gray-400 font-medium">
-                    {item.label}
-                  </span>
-                  <span className="text-lg font-medium text-white">
-                    {item.value}
-                  </span>
-                </div>
-                {index < 1 && <div className="h-px bg-[#333]/30"></div>}
+            <div>
+              <div className="flex items-center justify-between py-4">
+                <span className="text-sm text-gray-400 font-medium">Industry</span>
+                <span className="text-lg font-medium text-white">{stockData.industry}</span>
               </div>
-            ))}
+              <div className="h-px bg-[#333]/30"></div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between py-4">
+                <span className="text-sm text-gray-400 font-medium">Country</span>
+                <span className="text-lg font-medium text-white">{stockData.country}</span>
+              </div>
+            </div>
           </div>
         </div>
 

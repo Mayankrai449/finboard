@@ -20,79 +20,91 @@ interface StockData {
 }
 
 interface Widget {
+  id: string;
   symbol: string;
   refreshRate: number;
   data: StockData | null;
 }
 
 export default function Home() {
-  const [widget, setWidget] = useState<Widget | null>(null);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const refreshIntervalRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-  const fetchStockData = async (symbol: string) => {
-    setLoading(true);
-    setError('');
-
+  const fetchStockData = async (id: string, symbol: string): Promise<boolean> => {
     try {
       const response = await fetch(`/api/stock?symbol=${symbol}`);
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Failed to fetch stock data');
-        setWidget(null);
-        return;
+        console.error(`Failed to fetch ${symbol}:`, data.error);
+        return false;
       }
 
-      setWidget(prev => prev ? { ...prev, data } : null);
+      setWidgets(prev => 
+        prev.map(w => w.id === id ? { ...w, data } : w)
+      );
+      return true;
     } catch (err) {
-      setError('Failed to fetch stock data');
-      setWidget(null);
-    } finally {
-      setLoading(false);
+      console.error(`Failed to fetch ${symbol}:`, err);
+      return false;
     }
   };
 
-  const handleAddWidget = (symbol: string, refreshRate: number) => {
-    // Clear any existing interval
-    if (refreshIntervalRef.current) {
-      clearInterval(refreshIntervalRef.current);
-    }
-
+  const handleAddWidget = async (symbol: string, refreshRate: number) => {
+    const id = `${symbol}-${Date.now()}`;
+    
     // Create new widget
-    setWidget({
+    const newWidget: Widget = {
+      id,
       symbol,
       refreshRate,
       data: null,
-    });
+    };
 
+    setWidgets(prev => [...prev, newWidget]);
     setShowForm(false);
-    
-    // Fetch initial data
-    fetchStockData(symbol);
-
-    // Set up refresh interval
-    refreshIntervalRef.current = setInterval(() => {
-      fetchStockData(symbol);
-    }, refreshRate * 1000);
-  };
-
-  const handleRemoveWidget = () => {
-    if (refreshIntervalRef.current) {
-      clearInterval(refreshIntervalRef.current);
-    }
-    setWidget(null);
+    setLoading(true);
     setError('');
+    
+    // Fetch initial data and validate symbol
+    const success = await fetchStockData(id, symbol);
+    setLoading(false);
+    
+    if (!success) {
+      // Remove the widget if initial fetch failed
+      setWidgets(prev => prev.filter(w => w.id !== id));
+      setError(`Failed to add widget: Invalid stock symbol "${symbol}" or API error`);
+      return;
+    }
+
+    // Set up refresh interval for this specific widget if initial fetch succeeded
+    const interval = setInterval(() => {
+      fetchStockData(id, symbol);
+    }, refreshRate * 1000);
+    
+    refreshIntervalRefs.current.set(id, interval);
   };
 
-  // Cleanup interval on unmount
+  const handleRemoveWidget = (id: string) => {
+    // Clear interval for this widget
+    const interval = refreshIntervalRefs.current.get(id);
+    if (interval) {
+      clearInterval(interval);
+      refreshIntervalRefs.current.delete(id);
+    }
+    
+    // Remove widget from state
+    setWidgets(prev => prev.filter(w => w.id !== id));
+  };
+
+  // Cleanup all intervals on unmount
   useEffect(() => {
     return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
+      refreshIntervalRefs.current.forEach(interval => clearInterval(interval));
+      refreshIntervalRefs.current.clear();
     };
   }, []);
 
@@ -108,46 +120,54 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Add Widget Button */}
-        {!widget && (
-          <div className="flex justify-center mb-8">
-            <button
-              onClick={() => setShowForm(true)}
-              className="group relative px-8 py-4 bg-linear-to-r from-[#00d4ff] to-[#0066ff] text-[#0f0f1a] rounded-xl font-bold text-lg hover:from-[#00b8e6] hover:to-[#0055cc] transition-all shadow-lg shadow-[#00d4ff]/30 hover:shadow-[#00d4ff]/50 hover:scale-105 cursor-pointer"
-            >
-              <span className="flex items-center gap-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Add Stock Widget
-              </span>
-            </button>
-          </div>
-        )}
-
         {/* Error Message */}
         {error && (
-          <div className="max-w-2xl mx-auto mb-6 bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-4 text-[#ff4d4d] text-center">
+          <div className="max-w-6xl mx-auto mb-6 bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-4 text-[#ff4d4d] text-center">
             {error}
           </div>
         )}
 
-        {/* Widget Display */}
-        {widget && widget.data && (
-          <div className="relative">
-            <StockCard stockData={widget.data} />
-            
-            {/* Remove Widget Button */}
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={handleRemoveWidget}
-                className="text-sm text-gray-400 hover:text-[#ff4d4d] transition-colors underline cursor-pointer"
-              >
-                Remove Widget
-              </button>
+        {/* Widgets Display */}
+        <div className="space-y-8">
+          {widgets.map((widget) => (
+            <div key={widget.id} className="relative">
+              {widget.data ? (
+                <>
+                  <StockCard stockData={widget.data} />
+                  
+                  {/* Remove Widget Button */}
+                  <div className="flex justify-center mt-6">
+                    <button
+                      onClick={() => handleRemoveWidget(widget.id)}
+                      className="text-sm text-gray-400 hover:text-[#ff4d4d] transition-colors underline cursor-pointer"
+                    >
+                      Remove Widget
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="max-w-6xl mx-auto text-center py-8 text-gray-400">
+                  Loading {widget.symbol}...
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+
+        {/* Add Widget Button - Always visible */}
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setShowForm(true)}
+            className="group relative px-8 py-4 bg-linear-to-r from-[#00d4ff] to-[#0066ff] text-[#0f0f1a] rounded-xl font-bold text-lg hover:from-[#00b8e6] hover:to-[#0055cc] transition-all shadow-lg shadow-[#00d4ff]/30 hover:shadow-[#00d4ff]/50 hover:scale-105 cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Stock Widget
+            </span>
+          </button>
+        </div>
 
       </div>
 

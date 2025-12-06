@@ -20,8 +20,8 @@ export default function AddWidgetForm({ onAddWidget, onClose }: AddWidgetFormPro
     }
 
     const rate = parseInt(refreshRate);
-    if (isNaN(rate) || rate < 5) {
-      alert('Refresh rate must be at least 5 seconds');
+    if (isNaN(rate) || rate < 1 || rate > 60) {
+      alert('Refresh rate must be between 1 and 60 seconds');
       return;
     }
 
@@ -71,11 +71,12 @@ export default function AddWidgetForm({ onAddWidget, onClose }: AddWidgetFormPro
                 id="refreshRate"
                 value={refreshRate}
                 onChange={(e) => setRefreshRate(e.target.value)}
-                min="5"
-                step="5"
+                min="1"
+                max="60"
+                step="1"
                 className="w-full px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
               />
-              <p className="text-xs text-gray-500 mt-1">Minimum 5 seconds</p>
+              <p className="text-xs text-gray-500 mt-1">Range: 1-60 seconds</p>
             </div>
 
             {/* Buttons */}
