@@ -49,6 +49,16 @@ const initialState: WidgetsState = {
   error: '',
 };
 
+// Action to hydrate state from localStorage
+export const hydrateWidgets = (state: WidgetsState, configs: any[]) => {
+  state.widgets = configs.map(config => ({
+    ...config,
+    data: null,
+    rawData: null,
+    lastUpdated: new Date().toISOString(),
+  }));
+};
+
 const widgetsSlice = createSlice({
   name: 'widgets',
   initialState,
@@ -84,6 +94,14 @@ const widgetsSlice = createSlice({
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
+    hydrateFromLocalStorage: (state, action: PayloadAction<any[]>) => {
+      state.widgets = action.payload.map(config => ({
+        ...config,
+        data: null,
+        rawData: null,
+        lastUpdated: new Date().toISOString(),
+      }));
+    },
   },
 });
 
@@ -95,6 +113,7 @@ export const {
   setShowForm,
   setLoading,
   setError,
+  hydrateFromLocalStorage,
 } = widgetsSlice.actions;
 
 export default widgetsSlice.reducer;

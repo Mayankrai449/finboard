@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getCachedData, setCachedData } from '@/lib/utils/apiCache';
 
 // API Keys from environment
 const API_KEYS = {
@@ -89,6 +90,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'URL is required' }, { status: 400 });
   }
 
+  // Check cache first
+  const cachedData = getCachedData(url);
+  if (cachedData) {
+    return NextResponse.json(cachedData);
+  }
+
   // Detect API provider
   const apiConfig = detectApiProvider(url);
   
@@ -146,6 +153,9 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+
+    // Store in cache
+    setCachedData(url, data);
 
     // Return the raw response as-is for field exploration
     return NextResponse.json(data);

@@ -15,17 +15,37 @@ import {
   setShowForm,
   setLoading,
   setError,
+  hydrateFromLocalStorage,
   type Widget,
   type StockData,
   type SelectedField,
 } from '@/lib/store/slices/widgetsSlice';
 import type { SelectedFieldItem } from '@/components/FieldSelector';
+import { loadWidgetConfigs, saveWidgetConfigs } from '@/lib/utils/localStorage';
 
 export default function Home() {
   const dispatch = useAppDispatch();
   const { widgets, showForm, loading, error } = useAppSelector((state) => state.widgets);
   const refreshIntervalRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate from localStorage on mount
+  useEffect(() => {
+    const configs = loadWidgetConfigs();
+    if (configs.length > 0) {
+      dispatch(hydrateFromLocalStorage(configs));
+    }
+    setIsHydrated(true);
+  }, [dispatch]);
+
+  // Sync widget configs to localStorage whenever widgets change
+  // Only saves config
+  useEffect(() => {
+    if (isHydrated) {
+      saveWidgetConfigs(widgets);
+    }
+  }, [widgets, isHydrated]);
 
   const fetchCustomApiData = async (id: string, url: string): Promise<any> => {
     try {
@@ -205,6 +225,26 @@ export default function Home() {
     dispatch(setShowForm(false));
     setEditingWidget(null);
   };
+
+  // Set up refresh intervals for all widgets after hydration
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    // Start polling for all widgets
+    widgets.forEach(widget => {
+      if (widget.customApiUrl && !refreshIntervalRefs.current.has(widget.id)) {
+        // Fetch initial data
+        fetchCustomApiData(widget.id, widget.customApiUrl);
+        
+        // Set up interval
+        const interval = setInterval(() => {
+          fetchCustomApiData(widget.id, widget.customApiUrl!);
+        }, widget.refreshRate * 1000);
+        
+        refreshIntervalRefs.current.set(widget.id, interval);
+      }
+    });
+  }, [widgets, isHydrated]);
 
   // Cleanup all intervals on unmount
   useEffect(() => {

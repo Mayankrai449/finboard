@@ -105,8 +105,10 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       setApiResponse(data);
       setIsConnected(true);
       
-      // Reset selected fields when reconnecting
-      setSelectedFields([]);
+      // Reset selected fields only when adding new widget
+      if (!initialData) {
+        setSelectedFields([]);
+      }
       
       // Validate OHLC data for chart mode
       if (hasValidOHLCData(data)) {
