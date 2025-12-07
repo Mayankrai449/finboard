@@ -200,9 +200,9 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       <div>
         <h3 className="text-lg font-semibold text-white mb-3">
           {displayMode === 'table' && !selectedArrayPath 
-            ? 'Step 1: Select Array Field' 
+            ? 'Select Array Field' 
             : displayMode === 'table' && selectedArrayPath
-            ? 'Step 2: Select Table Columns'
+            ? 'Select Table Columns'
             : 'Available Fields'}
         </h3>
         

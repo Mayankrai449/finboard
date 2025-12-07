@@ -107,9 +107,6 @@ export default function StockCard({
                   {widgetDescription && (
                     <p className="text-gray-400 text-xs mt-1 line-clamp-1">{widgetDescription}</p>
                   )}
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-gray-400 text-sm font-medium">({stockData.symbol})</span>
-                  </div>
                 </div>
                 
                 {/* Action Icons */}
@@ -194,9 +191,6 @@ export default function StockCard({
               <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1 truncate">
                 {stockData.companyName}
               </h2>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-gray-400 text-sm font-medium">({stockData.symbol})</span>
-              </div>
             </div>
             
             {/* Action Icons */}

@@ -8,35 +8,28 @@ interface AddWidgetFormProps {
   onAddWidget: (
     name: string,
     description: string,
-    symbol: string,
+    apiUrl: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
     displayMode: 'card' | 'table' | 'chart',
-    customApiUrl?: string,
     chartType?: 'candlestick' | 'linear'
   ) => void;
   onClose: () => void;
   initialData?: {
     name: string;
     description: string;
-    symbol: string;
     apiUrl: string;
     refreshRate: string;
     selectedFields: SelectedFieldItem[];
-    activeTab: TabType;
     displayMode: 'card' | 'table' | 'chart';
     chartType?: 'candlestick' | 'linear';
   };
 }
 
-type TabType = 'symbol' | 'api-url';
-
 export default function AddWidgetForm({ onAddWidget, onClose, initialData }: AddWidgetFormProps) {
   const formRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState<TabType>(initialData?.activeTab || 'symbol');
   const [name, setName] = useState(initialData?.name || '');
   const [description, setDescription] = useState(initialData?.description || '');
-  const [symbol, setSymbol] = useState(initialData?.symbol || '');
   const [apiUrl, setApiUrl] = useState(initialData?.apiUrl || '');
   const [refreshRate, setRefreshRate] = useState(initialData?.refreshRate || '30');
   const [displayMode, setDisplayMode] = useState<'card' | 'table' | 'chart'>(initialData?.displayMode || 'card');
@@ -76,65 +69,44 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
     setError('');
 
     try {
-      let response;
-      let data;
+      if (!apiUrl.trim()) {
+        setError('Please enter an API URL');
+        return;
+      }
 
-      if (activeTab === 'symbol') {
-        if (!symbol.trim()) {
-          setError('Please enter a stock symbol');
-          return;
+      if (!isValidUrl(apiUrl.trim())) {
+        setError('Please enter a valid URL');
+        return;
+      }
+
+      const response = await fetch(`/api/custom-api?url=${encodeURIComponent(apiUrl.trim())}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        const statusCode = response.status;
+        let friendlyMessage = 'Failed to fetch data from the API';
+        
+        if (statusCode === 404) {
+          friendlyMessage = 'The API endpoint was not found (404). Please check the URL.';
+        } else if (statusCode === 403) {
+          friendlyMessage = 'Access denied (403). The API may require authentication.';
+        } else if (statusCode === 500) {
+          friendlyMessage = 'The API server encountered an error (500).';
+        } else if (statusCode >= 400 && statusCode < 500) {
+          friendlyMessage = `The API returned an error (${statusCode}). Please check the URL and try again.`;
+        } else if (statusCode >= 500) {
+          friendlyMessage = `The API server is experiencing issues (${statusCode}). Please try again later.`;
         }
-
-        response = await fetch(`/api/stock-explore?symbol=${symbol.trim().toUpperCase()}`);
-        data = await response.json();
-
-        if (!response.ok) {
-          setError(data.error || 'Failed to fetch stock data');
-          return;
-        }
-
-        // Auto-fill widget name if empty
-        if (!name && data.profile?.name) {
-          setName(data.profile.name);
-        }
-      } else {
-        // API URL tab
-        if (!apiUrl.trim()) {
-          setError('Please enter an API URL');
-          return;
-        }
-
-        if (!isValidUrl(apiUrl.trim())) {
-          setError('Please enter a valid URL');
-          return;
-        }
-
-        response = await fetch(`/api/custom-api?url=${encodeURIComponent(apiUrl.trim())}`);
-        data = await response.json();
-
-        if (!response.ok) {
-          const statusCode = response.status;
-          let friendlyMessage = 'Failed to fetch data from the API';
-          
-          if (statusCode === 404) {
-            friendlyMessage = 'The API endpoint was not found (404). Please check the URL.';
-          } else if (statusCode === 403) {
-            friendlyMessage = 'Access denied (403). The API may require authentication.';
-          } else if (statusCode === 500) {
-            friendlyMessage = 'The API server encountered an error (500).';
-          } else if (statusCode >= 400 && statusCode < 500) {
-            friendlyMessage = `The API returned an error (${statusCode}). Please check the URL and try again.`;
-          } else if (statusCode >= 500) {
-            friendlyMessage = `The API server is experiencing issues (${statusCode}). Please try again later.`;
-          }
-          
-          setError(friendlyMessage);
-          return;
-        }
+        
+        setError(friendlyMessage);
+        return;
       }
 
       setApiResponse(data);
       setIsConnected(true);
+      
+      // Reset selected fields when reconnecting
+      setSelectedFields([]);
       
       // Validate OHLC data for chart mode
       if (hasValidOHLCData(data)) {
@@ -150,13 +122,6 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
     }
   };
 
-  const handleTabChange = (tab: TabType) => {
-    if (!isConnected) {
-      setActiveTab(tab);
-      setError('');
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -165,12 +130,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       return;
     }
 
-    if (activeTab === 'symbol' && !symbol.trim()) {
-      setError('Please enter a stock symbol');
-      return;
-    }
-
-    if (activeTab === 'api-url' && !apiUrl.trim()) {
+    if (!apiUrl.trim()) {
       setError('Please enter an API URL');
       return;
     }
@@ -201,11 +161,10 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
     onAddWidget(
       name.trim(),
       description.trim(),
-      activeTab === 'symbol' ? symbol.trim().toUpperCase() : apiUrl.trim(),
+      apiUrl.trim(),
       rate,
       selectedFields,
       displayMode,
-      activeTab === 'api-url' ? apiUrl.trim() : undefined,
       displayMode === 'chart' ? chartType : undefined
     );
   };
@@ -260,83 +219,60 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               />
             </div>
 
-            {/* Tabs for Symbol vs API URL */}
+            {/* API URL Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Data Source <span className="text-[#ff4d4d]">*</span>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-300 mb-2">
+                API URL <span className="text-[#ff4d4d]">*</span>
               </label>
-              
-              {/* Tab Headers */}
-              <div className="flex gap-2 mb-3">
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('symbol')}
-                  disabled={isConnected || isConnecting}
-                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
-                    activeTab === 'symbol'
-                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
-                  } ${isConnected || isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  Symbol
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('api-url')}
-                  disabled={isConnected || isConnecting}
-                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
-                    activeTab === 'api-url'
-                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
-                  } ${isConnected || isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  API URL
-                </button>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  id="apiUrl"
+                  value={apiUrl}
+                  onChange={(e) => setApiUrl(e.target.value)}
+                  placeholder="e.g., https://api.coinbase.com/v2/exchange-rates?currency=BTC"
+                  className="flex-1 px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                  disabled={isConnecting}
+                />
+                {isConnected && (
+                  <button
+                    type="button"
+                    onClick={handleConnect}
+                    disabled={isConnecting || !apiUrl.trim()}
+                    className="px-4 py-3 bg-[#00d4ff] text-[#0f0f1a] rounded-lg font-medium hover:bg-[#00b8e6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Reconnect with updated URL"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
+                )}
               </div>
-
-              {/* Tab Content */}
-              {activeTab === 'symbol' ? (
-                <div>
-                  <input
-                    type="text"
-                    id="symbol"
-                    value={symbol}
-                    onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                    placeholder="e.g., AAPL, GOOGL, MSFT"
-                    className="w-full px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
-                    disabled={isConnected || isConnecting}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Stock symbol for Finnhub API</p>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex gap-2">
-                    <input
-                      type="url"
-                      id="apiUrl"
-                      value={apiUrl}
-                      onChange={(e) => setApiUrl(e.target.value)}
-                      placeholder="e.g., https://api.coinbase.com/v2/exchange-rates?currency=BTC"
-                      className="flex-1 px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
-                      disabled={isConnecting}
-                    />
-                    {isConnected && (
-                      <button
-                        type="button"
-                        onClick={handleConnect}
-                        disabled={isConnecting || !apiUrl.trim()}
-                        className="px-4 py-3 bg-[#00d4ff] text-[#0f0f1a] rounded-lg font-medium hover:bg-[#00b8e6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Reconnect with updated URL"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                      </button>
-                    )}
+              <div className="mt-2">
+                <details className="mt-2">
+                  <summary className="text-xs text-[#00d4ff] cursor-pointer hover:text-[#00b8e6] transition-colors">
+                    Supported APIs
+                  </summary>
+                  <div className="mt-2 p-3 bg-[#0f0f1a] rounded-lg border border-[#333] space-y-2 text-xs text-gray-400">
+                    <div>
+                      <span className="text-[#00d4ff] font-medium">Twelve Data:</span>
+                      <code className="block mt-1 text-[10px] text-gray-500">api.twelvedata.com/...</code>
+                    </div>
+                    <div>
+                      <span className="text-[#00d4ff] font-medium">Alpha Vantage:</span>
+                      <code className="block mt-1 text-[10px] text-gray-500">alphavantage.co/query?...</code>
+                    </div>
+                    <div>
+                      <span className="text-[#00d4ff] font-medium">Finnhub:</span>
+                      <code className="block mt-1 text-[10px] text-gray-500">finnhub.io/api/v1/...</code>
+                    </div>
+                    <div>
+                      <span className="text-[#00d4ff] font-medium">Indian Stock API:</span>
+                      <code className="block mt-1 text-[10px] text-gray-500">stock.indianapi.in/...</code>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Full URL to a JSON API endpoint</p>
-                </div>
-              )}
+                </details>
+              </div>
             </div>
 
             {/* Refresh Rate Input */}
@@ -475,11 +411,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 <button
                   type="button"
                   onClick={handleConnect}
-                  disabled={
-                    isConnecting || 
-                    (activeTab === 'symbol' && !symbol.trim()) ||
-                    (activeTab === 'api-url' && !apiUrl.trim())
-                  }
+                  disabled={isConnecting || !apiUrl.trim()}
                   className="w-full px-4 py-3 bg-linear-to-r from-[#00d4ff] to-[#0066ff] text-[#0f0f1a] rounded-lg font-bold hover:from-[#00b8e6] hover:to-[#0055cc] transition-all shadow-lg shadow-[#00d4ff]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isConnecting ? 'Connecting...' : 'Connect'}

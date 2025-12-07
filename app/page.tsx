@@ -27,48 +27,6 @@ export default function Home() {
   const refreshIntervalRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
 
-  const fetchStockData = async (id: string, symbol: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/stock?symbol=${symbol}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error(`Failed to fetch ${symbol}:`, data.error);
-        return false;
-      }
-
-      dispatch(updateWidgetData({ id, data }));
-      return true;
-    } catch (err) {
-      console.error(`Failed to fetch ${symbol}:`, err);
-      return false;
-    }
-  };
-
-  const fetchStockDataWithFields = async (id: string, symbol: string): Promise<any> => {
-    try {
-      const response = await fetch(`/api/stock-explore?symbol=${symbol}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error(`Failed to fetch ${symbol}:`, data.error);
-        return null;
-      }
-
-      // Update widget with both mapped data and raw data
-      dispatch(updateWidgetData({ 
-        id, 
-        data: data.mapped,
-        rawData: data
-      }));
-      
-      return data;
-    } catch (err) {
-      console.error(`Failed to fetch ${symbol}:`, err);
-      return null;
-    }
-  };
-
   const fetchCustomApiData = async (id: string, url: string): Promise<any> => {
     try {
       const response = await fetch(`/api/custom-api?url=${encodeURIComponent(url)}`);
@@ -108,22 +66,21 @@ export default function Home() {
   const handleAddWidget = async (
     name: string,
     description: string,
-    symbol: string,
+    apiUrl: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
     displayMode: 'card' | 'table' | 'chart',
-    customApiUrl?: string,
     chartType?: 'candlestick' | 'linear'
   ) => {
-    const id = `${symbol}-${Date.now()}`;
+    const id = `${Date.now()}`;
     
     // Create new widget with custom fields
     const newWidget: Widget = {
       id,
       name,
       description,
-      symbol,
-      customApiUrl,
+      symbol: apiUrl,
+      customApiUrl: apiUrl,
       refreshRate,
       selectedFields: selectedFields.map(f => ({
         path: f.path,
@@ -143,26 +100,20 @@ export default function Home() {
     dispatch(setError(''));
     
     // Fetch initial data and validate
-    const fullData = customApiUrl 
-      ? await fetchCustomApiData(id, customApiUrl)
-      : await fetchStockDataWithFields(id, symbol);
+    const fullData = await fetchCustomApiData(id, apiUrl);
     
     dispatch(setLoading(false));
     
     if (!fullData) {
       // Remove the widget if initial fetch failed
       dispatch(removeWidget(id));
-      dispatch(setError(`Failed to add widget: ${customApiUrl ? 'Invalid API URL' : `Invalid stock symbol "${symbol}"`} or API error`));
+      dispatch(setError(`Failed to add widget: Invalid API URL or API error`));
       return;
     }
 
     // Set up refresh interval for this specific widget if initial fetch succeeded
     const interval = setInterval(() => {
-      if (customApiUrl) {
-        fetchCustomApiData(id, customApiUrl);
-      } else {
-        fetchStockDataWithFields(id, symbol);
-      }
+      fetchCustomApiData(id, apiUrl);
     }, refreshRate * 1000);
     
     refreshIntervalRefs.current.set(id, interval);
@@ -180,12 +131,8 @@ export default function Home() {
     dispatch(removeWidget(id));
   };
 
-  const handleRefreshWidget = (id: string, symbol: string, customApiUrl?: string) => {
-    if (customApiUrl) {
-      fetchCustomApiData(id, customApiUrl);
-    } else {
-      fetchStockDataWithFields(id, symbol);
-    }
+  const handleRefreshWidget = (id: string, apiUrl: string) => {
+    fetchCustomApiData(id, apiUrl);
   };
 
   const handleEditWidget = (widget: Widget) => {
@@ -196,11 +143,10 @@ export default function Home() {
   const handleUpdateWidget = async (
     name: string,
     description: string,
-    symbol: string,
+    apiUrl: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
     displayMode: 'card' | 'table' | 'chart',
-    customApiUrl?: string,
     chartType?: 'candlestick' | 'linear'
   ) => {
     if (!editingWidget) return;
@@ -219,8 +165,8 @@ export default function Home() {
       ...editingWidget,
       name,
       description,
-      symbol,
-      customApiUrl,
+      symbol: apiUrl,
+      customApiUrl: apiUrl,
       refreshRate,
       selectedFields: selectedFields.map(f => ({
         path: f.path,
@@ -238,24 +184,18 @@ export default function Home() {
     dispatch(setError(''));
     
     // Fetch new data
-    const fullData = customApiUrl 
-      ? await fetchCustomApiData(id, customApiUrl)
-      : await fetchStockDataWithFields(id, symbol);
+    const fullData = await fetchCustomApiData(id, apiUrl);
     
     dispatch(setLoading(false));
     
     if (!fullData) {
-      dispatch(setError(`Failed to update widget: ${customApiUrl ? 'Invalid API URL' : `Invalid stock symbol "${symbol}"`} or API error`));
+      dispatch(setError(`Failed to update widget: Invalid API URL or API error`));
       return;
     }
 
     // Set up new refresh interval
     const interval = setInterval(() => {
-      if (customApiUrl) {
-        fetchCustomApiData(id, customApiUrl);
-      } else {
-        fetchStockDataWithFields(id, symbol);
-      }
+      fetchCustomApiData(id, apiUrl);
     }, refreshRate * 1000);
     
     refreshIntervalRefs.current.set(id, interval);
@@ -306,7 +246,7 @@ export default function Home() {
                   chartType={widget.chartType || 'candlestick'}
                   refreshRate={widget.refreshRate}
                   lastUpdated={widget.lastUpdated || new Date().toISOString()}
-                  onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                  onRefresh={() => handleRefreshWidget(widget.id, widget.customApiUrl!)}
                   onEdit={() => handleEditWidget(widget)}
                   onDelete={() => handleRemoveWidget(widget.id)}
                 />
@@ -319,7 +259,7 @@ export default function Home() {
                     rawData={widget.rawData}
                     refreshRate={widget.refreshRate}
                     lastUpdated={widget.lastUpdated || new Date().toISOString()}
-                    onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                    onRefresh={() => handleRefreshWidget(widget.id, widget.customApiUrl!)}
                     onEdit={() => handleEditWidget(widget)}
                     onDelete={() => handleRemoveWidget(widget.id)}
                   />
@@ -332,14 +272,14 @@ export default function Home() {
                     rawData={widget.rawData}
                     refreshRate={widget.refreshRate}
                     lastUpdated={widget.lastUpdated || new Date().toISOString()}
-                    onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                    onRefresh={() => handleRefreshWidget(widget.id, widget.customApiUrl!)}
                     onEdit={() => handleEditWidget(widget)}
                     onDelete={() => handleRemoveWidget(widget.id)}
                   />
                 )
               ) : (
                 <div className="max-w-4xl mx-auto text-center py-8 text-gray-400">
-                  Loading {widget.symbol}...
+                  Loading...
                 </div>
               )}
             </div>
@@ -371,7 +311,6 @@ export default function Home() {
           initialData={editingWidget ? {
             name: editingWidget.name,
             description: editingWidget.description || '',
-            symbol: editingWidget.symbol,
             apiUrl: editingWidget.customApiUrl || '',
             refreshRate: editingWidget.refreshRate.toString(),
             selectedFields: editingWidget.selectedFields.map(f => ({
@@ -379,7 +318,6 @@ export default function Home() {
               label: f.label,
               type: f.type,
             })),
-            activeTab: editingWidget.customApiUrl ? 'api-url' as const : 'symbol' as const,
             displayMode: editingWidget.displayMode || 'card',
             chartType: editingWidget.chartType,
           } : undefined}
