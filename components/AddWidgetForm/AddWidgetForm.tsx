@@ -28,6 +28,7 @@ interface AddWidgetFormProps {
 
 export default function AddWidgetForm({ onAddWidget, onClose, initialData }: AddWidgetFormProps) {
   const formRef = useRef<HTMLDivElement>(null);
+  const lastConnectedUrl = useRef(initialData?.apiUrl || '');
   const [name, setName] = useState(initialData?.name || '');
   const [description, setDescription] = useState(initialData?.description || '');
   const [apiUrl, setApiUrl] = useState(initialData?.apiUrl || '');
@@ -105,9 +106,10 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       setApiResponse(data);
       setIsConnected(true);
       
-      // Reset selected fields only when adding new widget
-      if (!initialData) {
+      // Reset selected fields only when connecting to a different URL
+      if (apiUrl.trim() !== lastConnectedUrl.current) {
         setSelectedFields([]);
+        lastConnectedUrl.current = apiUrl.trim();
       }
       
       // Validate OHLC data for chart mode

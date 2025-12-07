@@ -37,7 +37,7 @@ interface StockCardProps {
 
 // Function to get nested value from object using path
 function getValueByPath(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+  return path.split('->').reduce((current, key) => current?.[key], obj);
 }
 
 // Function to format values based on type

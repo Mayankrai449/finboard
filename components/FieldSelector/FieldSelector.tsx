@@ -27,7 +27,7 @@ interface FlattenedField {
 
 // Function to get nested value from object using path
 function getValueByPath(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+  return path.split('->').reduce((current, key) => current?.[key], obj);
 }
 
 export default function FieldSelector({ apiResponse, selectedFields, onFieldsChange, displayMode = 'card' }: FieldSelectorProps) {
@@ -43,7 +43,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
-        const path = prefix ? `${prefix}.${key}` : key;
+        const path = prefix ? `${prefix}->${key}` : key;
         
         if (value === null) {
           fields.push({ path, value, type: 'null' });
@@ -138,7 +138,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       } else {
         // Select new array and clear previous fields
         setSelectedArrayPath(path);
-        const label = path.split('.').pop() || path;
+        const label = path.split('->').pop() || path;
         onFieldsChange([{
           path,
           label: label.charAt(0).toUpperCase() + label.slice(1),
@@ -157,7 +157,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       // Add field, only allow primitive types, not objects
       if (field.type === 'object') return;
       
-      const label = path.split('.').pop() || path; // Use last part of path as default label
+      const label = path.split('->').pop() || path; // Use last part of path as default label
       
       onFieldsChange([
         ...selectedFields,
@@ -200,7 +200,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       const fieldsToAdd = filteredFields
         .filter(f => f.type !== 'object') // Only leaf nodes
         .map(f => {
-          const label = f.path.split('.').pop() || f.path;
+          const label = f.path.split('->').pop() || f.path;
           return {
             path: f.path,
             label: label.charAt(0).toUpperCase() + label.slice(1),

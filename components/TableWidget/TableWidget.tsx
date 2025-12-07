@@ -22,7 +22,7 @@ interface TableWidgetProps {
 
 // Function to get nested value from object using path
 function getValueByPath(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+  return path.split('->').reduce((current, key) => current?.[key], obj);
 }
 
 // Function to flatten nested objects into dot notation
@@ -30,7 +30,7 @@ function flattenObject(obj: any, prefix = ''): Record<string, any> {
   const result: Record<string, any> = {};
   
   for (const [key, value] of Object.entries(obj)) {
-    const newKey = prefix ? `${prefix}.${key}` : key;
+    const newKey = prefix ? `${prefix}->${key}` : key;
     
     if (value === null || value === undefined) {
       result[newKey] = value;
