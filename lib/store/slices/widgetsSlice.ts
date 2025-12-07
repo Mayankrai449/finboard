@@ -33,6 +33,13 @@ export interface Widget {
   lastUpdated?: string; // Track last data update time
   displayMode?: 'card' | 'table' | 'chart'; // Display mode: card, table, or chart
   chartType?: 'candlestick' | 'linear'; // Chart type for chart display mode
+  layout?: {
+    i: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
 }
 
 interface WidgetsState {
@@ -85,6 +92,12 @@ const widgetsSlice = createSlice({
         state.widgets[index] = action.payload;
       }
     },
+    updateLayout: (state, action: PayloadAction<{ id: string; layout: { i: string; x: number; y: number; w: number; h: number } }>) => {
+      const widget = state.widgets.find(w => w.id === action.payload.id);
+      if (widget) {
+        widget.layout = action.payload.layout;
+      }
+    },
     setShowForm: (state, action: PayloadAction<boolean>) => {
       state.showForm = action.payload;
     },
@@ -110,6 +123,7 @@ export const {
   removeWidget,
   updateWidgetData,
   updateWidget,
+  updateLayout,
   setShowForm,
   setLoading,
   setError,

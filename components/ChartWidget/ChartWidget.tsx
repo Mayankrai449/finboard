@@ -224,17 +224,23 @@ export default function ChartWidget({
   const isValidData = mappingResult && mappingResult.format !== 'unknown' && mappingResult.data.length > 0;
 
   return (
-    <div className="relative max-w-6xl mx-auto">
+    <div className="relative h-full flex flex-col">
       <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
 
       {/* Main Card */}
-      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden">
+      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
         {/* Top Bar */}
         <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
 
-        <div className="p-4">
+        {/* Drag Handle */}
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+        </div>
+
+        <div className="px-4 pt-4 pb-2 flex-1 overflow-hidden flex flex-col">
           {/* Header Section */}
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start mb-4 shrink-0">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h3 className="text-xl font-bold text-white">{widgetName || 'Chart Widget'}</h3>

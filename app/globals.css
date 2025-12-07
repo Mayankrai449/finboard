@@ -49,6 +49,42 @@ body {
   background-color: #00b8e6;
 }
 
+/* React Grid Layout Styles */
+.react-grid-item.react-grid-placeholder {
+  background: rgba(0, 212, 255, 0.1) !important;
+  border: 2px dashed #00d4ff !important;
+  border-radius: 12px !important;
+  opacity: 0.5 !important;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+  z-index: 100;
+}
+
+.react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 12px;
+  height: 12px;
+  border-right: 3px solid #00d4ff;
+  border-bottom: 3px solid #00d4ff;
+  border-bottom-right-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.react-resizable-handle:hover::after {
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
 .stock-info {
   background-color: #1a1a2e;
   padding: 20px;

@@ -87,16 +87,22 @@ export default function StockCard({
 
   if (useCustomFields) {
     return (
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative h-full flex flex-col">
         <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
         
         {/* Main Card */}
-        <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden">
+        <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
           
           {/* Top Bar */}
           <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
           
-          <div className="p-4">
+        {/* Drag Handle */}
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+        </div>
+
+        <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">
             {/* Header Section */}
             <div className="mb-4">
               <div className="flex items-start justify-between gap-4">
@@ -175,17 +181,23 @@ export default function StockCard({
 
   // Default display
   return (
-    <div className="relative max-w-4xl mx-auto">
+    <div className="relative h-full flex flex-col">
       <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
       
       {/* Main Card */}
-      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden">
+      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
         
         {/* Top Bar */}
         <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
         
-        <div className="p-4">
-          {/* Header Section */}
+        {/* Drag Handle */}
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+        </div>
+
+        <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">
+            {/* Header Section */}
           <div className="mb-4 flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1 truncate">

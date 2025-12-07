@@ -14,6 +14,13 @@ export interface WidgetConfig {
   selectedFields: any[];
   displayMode?: 'card' | 'table' | 'chart';
   chartType?: 'candlestick' | 'linear';
+  layout?: {
+    i: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
 }
 
 // Extract config from widget
@@ -28,6 +35,7 @@ export function extractWidgetConfig(widget: Widget): WidgetConfig {
     selectedFields: widget.selectedFields,
     displayMode: widget.displayMode,
     chartType: widget.chartType,
+    layout: widget.layout,
   };
 }
 

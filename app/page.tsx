@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import StockCard from '@/components/StockCard';
 import TableWidget from '@/components/TableWidget';
@@ -12,16 +12,20 @@ import {
   removeWidget,
   updateWidgetData,
   updateWidget,
+  updateLayout,
   setShowForm,
   setLoading,
   setError,
   hydrateFromLocalStorage,
   type Widget,
-  type StockData,
-  type SelectedField,
 } from '@/lib/store/slices/widgetsSlice';
 import type { SelectedFieldItem } from '@/components/FieldSelector';
 import { loadWidgetConfigs, saveWidgetConfigs } from '@/lib/utils/localStorage';
+import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -29,6 +33,11 @@ export default function Home() {
   const refreshIntervalRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -254,18 +263,61 @@ export default function Home() {
     };
   }, []);
 
+  const onLayoutChange = (layout: any[]) => {
+    if (!isHydrated) return;
+    
+    layout.forEach((item) => {
+      if (item.i === 'add-button') return;
+      dispatch(updateLayout({
+        id: item.i,
+        layout: {
+          i: item.i,
+          x: item.x,
+          y: item.y,
+          w: item.w,
+          h: item.h
+        }
+      }));
+    });
+  };
+
+  const layouts = useMemo(() => {
+    const lgLayout: Layout[] = widgets.map((widget, index) => {
+      if (widget.layout) return { ...widget.layout, i: widget.id };
+      
+      return {
+        i: widget.id,
+        x: (index * 6) % 12,
+        y: Math.floor(index / 2) * 4,
+        w: 6,
+        h: widget.displayMode === 'chart' ? 6 : 4,
+        minW: 3,
+        minH: 3,
+      };
+    });
+
+    const count = widgets.length;
+    lgLayout.push({
+      i: 'add-button',
+      x: (count * 6) % 12,
+      y: Math.floor(count / 2) * 4,
+      w: 6,
+      h: 2,
+      static: false,
+      isDraggable: false,
+      isResizable: false
+    });
+
+    return { lg: lgLayout };
+  }, [widgets]);
+
+  if (!mounted) return null;
+
   return (
     <div>
       <Navbar />
       
-      <div className="container" style={{ paddingTop: '2rem' }}>
-        {/* Title */}
-        <div className="text-center" style={{ marginBottom: '3rem' }}>
-          <h1 className="text-5xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent" style={{ marginBottom: '0' }}>
-            Financial Dashboard
-          </h1>
-        </div>
-
+      <div className="w-full px-4" style={{ paddingTop: '2rem' }}>
         {/* Error Message */}
         {error && (
           <div className="max-w-6xl mx-auto mb-6 bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-4 text-[#ff4d4d] text-center">
@@ -273,12 +325,22 @@ export default function Home() {
           </div>
         )}
 
-        {/* Widgets Display */}
-        <div className="space-y-6">
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={layouts}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          rowHeight={100}
+          draggableHandle=".drag-handle"
+          onLayoutChange={(layout) => onLayoutChange(layout)}
+          isDraggable={true}
+          isResizable={true}
+          margin={[16, 16]}
+          containerPadding={[0, 0]}
+        >
           {widgets.map((widget) => (
             <div key={widget.id} className="relative">
               {widget.displayMode === 'chart' ? (
-                // Chart widgets display with just rawData
                 <ChartWidget
                   widgetName={widget.name}
                   widgetDescription={widget.description}
@@ -318,29 +380,27 @@ export default function Home() {
                   />
                 )
               ) : (
-                <div className="max-w-4xl mx-auto text-center py-8 text-gray-400">
+                <div className="h-full flex items-center justify-center bg-[#1a1a2e] rounded-xl border border-[#00d4ff]/20 text-gray-400">
                   Loading...
                 </div>
               )}
             </div>
           ))}
-        </div>
-
-        {/* Add Widget Button - Always visible */}
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={() => dispatch(setShowForm(true))}
-            className="group relative px-8 py-4 bg-linear-to-r from-[#00d4ff] to-[#0066ff] text-[#0f0f1a] rounded-xl font-bold text-lg hover:from-[#00b8e6] hover:to-[#0055cc] transition-all shadow-lg shadow-[#00d4ff]/30 hover:shadow-[#00d4ff]/50 hover:scale-105 cursor-pointer"
-          >
-            <span className="flex items-center gap-2">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Add Stock Widget
-            </span>
-          </button>
-        </div>
-
+          
+          <div key="add-button" className="relative">
+            <button
+              onClick={() => dispatch(setShowForm(true))}
+              className="w-full h-full border-2 border-dashed border-[#00d4ff]/30 rounded-xl flex flex-col items-center justify-center gap-3 text-[#00d4ff] hover:bg-[#00d4ff]/5 hover:border-[#00d4ff]/60 transition-all group cursor-pointer"
+            >
+              <div className="w-12 h-12 rounded-full bg-[#00d4ff]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <span className="font-medium">Add New Widget</span>
+            </button>
+          </div>
+        </ResponsiveGridLayout>
       </div>
 
       {/* Add Widget Form Modal */}
