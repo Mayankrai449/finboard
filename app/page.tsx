@@ -283,7 +283,14 @@ export default function Home() {
 
   const layouts = useMemo(() => {
     const lgLayout: Layout[] = widgets.map((widget, index) => {
-      if (widget.layout) return { ...widget.layout, i: widget.id };
+      if (widget.layout) {
+        return { 
+          ...widget.layout, 
+          i: widget.id,
+          minW: 3, // Enforce minimum width
+          minH: 3  // Enforce minimum height
+        };
+      }
       
       return {
         i: widget.id,

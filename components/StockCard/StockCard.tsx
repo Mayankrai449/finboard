@@ -99,7 +99,8 @@ export default function StockCard({
         {/* Drag Handle */}
         <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
            <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">
@@ -193,7 +194,8 @@ export default function StockCard({
         {/* Drag Handle */}
         <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
            <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">

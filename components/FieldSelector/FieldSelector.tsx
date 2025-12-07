@@ -194,17 +194,70 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
     onFieldsChange(newFields);
   };
 
+  const handleSelectAll = (select: boolean) => {
+    if (select) {
+      // Select all filtered fields
+      const fieldsToAdd = filteredFields
+        .filter(f => f.type !== 'object') // Only leaf nodes
+        .map(f => {
+          const label = f.path.split('.').pop() || f.path;
+          return {
+            path: f.path,
+            label: label.charAt(0).toUpperCase() + label.slice(1),
+            type: f.type as any,
+            value: f.value,
+            arrayPath: selectedArrayPath || undefined
+          };
+        });
+      
+      // Merge with existing selected fields to avoid duplicates
+      const newSelected = [...selectedFields];
+      fieldsToAdd.forEach(field => {
+        if (!newSelected.some(f => f.path === field.path)) {
+          newSelected.push(field);
+        }
+      });
+      onFieldsChange(newSelected);
+    } else {
+      // Unselect all filtered fields
+      const pathsToRemove = new Set(filteredFields.map(f => f.path));
+      onFieldsChange(selectedFields.filter(f => !pathsToRemove.has(f.path)));
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Available Fields Section */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-3">
-          {displayMode === 'table' && !selectedArrayPath 
-            ? 'Select Array Field' 
-            : displayMode === 'table' && selectedArrayPath
-            ? 'Select Table Columns'
-            : 'Available Fields'}
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-white">
+            {displayMode === 'table' && !selectedArrayPath 
+              ? 'Select Array Field' 
+              : displayMode === 'table' && selectedArrayPath
+              ? 'Select Table Columns'
+              : 'Available Fields'}
+          </h3>
+          
+          {/* Select All / Unselect All */}
+          {filteredFields.length > 0 && (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => handleSelectAll(true)}
+                className="text-xs px-3 py-1.5 border border-gray-600 rounded text-white hover:text-[#00d4ff] hover:border-[#00d4ff] transition-colors"
+              >
+                Select All
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectAll(false)}
+                className="text-xs px-3 py-1.5 border border-gray-600 rounded text-white hover:text-[#00d4ff] hover:border-[#00d4ff] transition-colors"
+              >
+                Unselect All
+              </button>
+            </div>
+          )}
+        </div>
         
         {displayMode === 'table' && !selectedArrayPath && (
           <div className="mb-3 p-3 bg-[#1a1a2e] border border-[#00d4ff]/30 rounded-lg text-sm text-gray-300">
@@ -330,11 +383,11 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
             Selected Fields ({selectedFields.length})
           </h3>
           
-          <div className="space-y-2">
+          <div className="max-h-68 overflow-y-auto bg-[#0f0f1a] border border-[#333] rounded-lg p-2 space-y-2">
             {selectedFields.map((field, index) => (
               <div
                 key={field.path}
-                className="bg-[#0f0f1a] border border-[#333] rounded-lg p-3"
+                className="bg-[#1a1a2e] border border-[#333] rounded-lg p-3"
               >
                 <div className="flex items-start gap-3">
                   {/* Move Up/Down Buttons */}

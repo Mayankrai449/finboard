@@ -154,6 +154,24 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       return;
     }
 
+    // Validate table mode requirements
+    if (displayMode === 'table') {
+      const hasArrayField = selectedFields.some(f => f.type === 'array');
+      const isRootArray = Array.isArray(apiResponse);
+      
+      if (!hasArrayField && !isRootArray) {
+        setError('Table widget requires an array data source. Please select an array field.');
+        return;
+      }
+
+      // Check if any columns are selected (non-array fields)
+      const hasColumns = selectedFields.some(f => f.type !== 'array');
+      if (!hasColumns) {
+         setError('Please select at least one column to display in the table.');
+         return;
+      }
+    }
+
     // Validate OHLC data for chart mode
     if (displayMode === 'chart' && !hasValidOHLCData(apiResponse)) {
       setError('Chart mode requires valid OHLC data format');
@@ -506,7 +524,6 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   <button
                     type="submit"
                     className="flex-1 px-4 py-3 bg-linear-to-r from-[#00ff88] to-[#00cc6a] text-[#0f0f1a] rounded-lg font-bold hover:from-[#00dd77] hover:to-[#00bb5e] transition-all shadow-lg shadow-[#00ff88]/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={displayMode !== 'chart' && selectedFields.length === 0}
                   >
                     {initialData ? 'Update Widget' : 'Add Widget'}
                   </button>

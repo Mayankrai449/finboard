@@ -235,7 +235,8 @@ export default function ChartWidget({
         {/* Drag Handle */}
         <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
            <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="ml-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-hidden flex flex-col">
@@ -243,7 +244,9 @@ export default function ChartWidget({
           <div className="flex justify-between items-start mb-4 shrink-0">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h3 className="text-xl font-bold text-white">{widgetName || 'Chart Widget'}</h3>
+                <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent truncate">
+                  {widgetName || 'Chart Widget'}
+                </h2>
                 <span className="px-2 py-1 bg-[#00d4ff]/10 border border-[#00d4ff]/30 rounded text-xs text-[#00d4ff] font-medium">
                   {chartType === 'candlestick' ? 'Candlestick' : 'Linear'}
                 </span>

@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinBoard - Financial Dashboard
+
+FinBoard is a highly customizable, modular, and scalable financial dashboard designed to visualize real-time market data. It allows users to create a personalized workspace with various widget types, supporting custom API integrations and flexible data mapping.
+
+![Dashboard Overview](./images/dash.png)
+
+## Live Demo
+
+Check out the live application deployed on Vercel:
+**[https://finboard-ecru.vercel.app/](https://finboard-ecru.vercel.app/)**
 
 ## Getting Started
 
-First, run the development server:
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/Mayankrai449/finboard.git
+    cd finboard
+    ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4.  Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+### Versatile Widget Types
+- **Stock Cards**: Display key metrics and real-time price updates.
+- **Data Tables**: Comprehensive views with built-in **pagination** and **search** capabilities.
+- **Charts**: Interactive visualizations using **Chart.js**, supporting both **Candlestick** and **Linear** charts for OHLC (Open, High, Low, Close) data.
 
-To learn more about Next.js, take a look at the following resources:
+### Customization & Usability
+- **Drag & Drop Layout**: Fully customizable grid layout using `react-grid-layout`. Organize your workspace exactly how you want it.
+- **Resizable Widgets**: Adjust the size of any widget to fit your needs.
+- **Custom API Support**: Connect to any JSON-based API.
+- **Configurable Fields**: Select exactly which data points to display using a powerful field selector with search functionality.
+- **Edit & Reconfigure**: Easily modify existing widgets to change data sources, fields, or visualization settings.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Performance & Reliability
+- **Real-time Data**: Automatic polling with configurable refresh intervals for each widget.
+- **Server-Side Caching**: Optimized API requests with server-side *caching* to reduce rate limits and improve load times.
+- **Robust Error Handling**: Graceful handling of API failures and network issues for a smooth user experience.
+- **Data Persistence**: Your dashboard configuration and layout are automatically saved and restored in browser's *local storage*.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Technical Highlights
+- **Smart Data Mapping**: Advanced data mappers handle various JSON structures, automatically flattening nested responses for easy selection.
+- **Redux State Management**: Centralized state for predictable data flow and widget management.
+- **Modular Architecture**: Built with scalability in mind, making it easy to add new widget types or features.
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Add Widget Form
+*Intuitive form to connect APIs and select data fields.*
+![Add Widget](./images/add.png)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Edit Configuration
+*Modify widget settings, refresh rates, and data mappings on the fly.*
+![Edit Widget](./images/edit.png)
+
+## Supported API Sources
+
+FinBoard includes built-in support and data mapping for major financial data providers, but is flexible enough to handle custom endpoints:
+
+1.  **Alpha Vantage**
+2.  **Twelve Data**
+3.  **Finnhub**
+4. **IndianAPI**
+
+## Tech Stack
+
+-   **Framework**: [Next.js](https://nextjs.org/)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+-   **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+-   **Layout Engine**: [React Grid Layout](https://github.com/react-grid-layout/react-grid-layout)
+-   **Charts**: [Chart.js](https://www.chartjs.org/)
