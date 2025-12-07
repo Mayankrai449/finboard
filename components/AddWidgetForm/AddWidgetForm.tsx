@@ -10,6 +10,7 @@ interface AddWidgetFormProps {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
+    displayMode: 'card' | 'table',
     customApiUrl?: string
   ) => void;
   onClose: () => void;
@@ -21,6 +22,7 @@ interface AddWidgetFormProps {
     refreshRate: string;
     selectedFields: SelectedFieldItem[];
     activeTab: TabType;
+    displayMode: 'card' | 'table';
   };
 }
 
@@ -34,6 +36,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
   const [symbol, setSymbol] = useState(initialData?.symbol || '');
   const [apiUrl, setApiUrl] = useState(initialData?.apiUrl || '');
   const [refreshRate, setRefreshRate] = useState(initialData?.refreshRate || '30');
+  const [displayMode, setDisplayMode] = useState<'card' | 'table'>(initialData?.displayMode || 'card');
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(!!initialData);
   const [apiResponse, setApiResponse] = useState<any>(null);
@@ -182,6 +185,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       activeTab === 'symbol' ? symbol.trim().toUpperCase() : apiUrl.trim(),
       rate,
       selectedFields,
+      displayMode,
       activeTab === 'api-url' ? apiUrl.trim() : undefined
     );
   };
@@ -334,6 +338,56 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               <p className="text-xs text-gray-500 mt-1">Range: 1-600 seconds (1s - 10min)</p>
             </div>
 
+            {/* Display Mode Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-3">
+                Display Mode <span className="text-[#ff4d4d]">*</span>
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDisplayMode('card');
+                    // Filter out array fields when switching to card mode
+                    if (selectedFields.some(f => f.type === 'array')) {
+                      setSelectedFields(selectedFields.filter(f => f.type !== 'array'));
+                    }
+                  }}
+                  disabled={isConnecting}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                    displayMode === 'card'
+                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
+                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                  } ${isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                  Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDisplayMode('table')}
+                  disabled={isConnecting}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                    displayMode === 'table'
+                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
+                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                  } ${isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Table
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {displayMode === 'card' 
+                  ? 'Card view displays individual fields. Best for simple data structures.'
+                  : 'Table view displays array data in rows. Requires API response with array fields.'}
+              </p>
+            </div>
+
             {/* Error Message */}
             {error && (
               <div className="bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-3 text-[#ff4d4d] text-sm">
@@ -366,6 +420,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   apiResponse={apiResponse}
                   selectedFields={selectedFields}
                   onFieldsChange={setSelectedFields}
+                  displayMode={displayMode}
                 />
               </div>
             )}

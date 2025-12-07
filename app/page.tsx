@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import StockCard from '@/components/StockCard';
+import TableWidget from '@/components/TableWidget';
 import AddWidgetForm from '@/components/AddWidgetForm';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import {
@@ -109,6 +110,7 @@ export default function Home() {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
+    displayMode: 'card' | 'table',
     customApiUrl?: string
   ) => {
     const id = `${symbol}-${Date.now()}`;
@@ -129,6 +131,7 @@ export default function Home() {
       data: null,
       rawData: null,
       lastUpdated: new Date().toISOString(),
+      displayMode,
     };
 
     dispatch(addWidget(newWidget));
@@ -193,6 +196,7 @@ export default function Home() {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
+    displayMode: 'card' | 'table',
     customApiUrl?: string
   ) => {
     if (!editingWidget) return;
@@ -219,6 +223,7 @@ export default function Home() {
         label: f.label,
         type: f.type
       })),
+      displayMode,
     };
 
     dispatch(updateWidget(updatedWidget));
@@ -288,18 +293,32 @@ export default function Home() {
           {widgets.map((widget) => (
             <div key={widget.id} className="relative">
               {widget.data ? (
-                <StockCard 
-                  widgetName={widget.name}
-                  widgetDescription={widget.description}
-                  stockData={widget.data}
-                  selectedFields={widget.selectedFields}
-                  rawData={widget.rawData}
-                  refreshRate={widget.refreshRate}
-                  lastUpdated={widget.lastUpdated || new Date().toISOString()}
-                  onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
-                  onEdit={() => handleEditWidget(widget)}
-                  onDelete={() => handleRemoveWidget(widget.id)}
-                />
+                widget.displayMode === 'table' ? (
+                  <TableWidget
+                    widgetName={widget.name}
+                    widgetDescription={widget.description}
+                    selectedFields={widget.selectedFields}
+                    rawData={widget.rawData}
+                    refreshRate={widget.refreshRate}
+                    lastUpdated={widget.lastUpdated || new Date().toISOString()}
+                    onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                    onEdit={() => handleEditWidget(widget)}
+                    onDelete={() => handleRemoveWidget(widget.id)}
+                  />
+                ) : (
+                  <StockCard 
+                    widgetName={widget.name}
+                    widgetDescription={widget.description}
+                    stockData={widget.data}
+                    selectedFields={widget.selectedFields}
+                    rawData={widget.rawData}
+                    refreshRate={widget.refreshRate}
+                    lastUpdated={widget.lastUpdated || new Date().toISOString()}
+                    onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                    onEdit={() => handleEditWidget(widget)}
+                    onDelete={() => handleRemoveWidget(widget.id)}
+                  />
+                )
               ) : (
                 <div className="max-w-4xl mx-auto text-center py-8 text-gray-400">
                   Loading {widget.symbol}...
@@ -343,6 +362,7 @@ export default function Home() {
               type: f.type,
             })),
             activeTab: editingWidget.customApiUrl ? 'api-url' as const : 'symbol' as const,
+            displayMode: editingWidget.displayMode || 'card',
           } : undefined}
         />
       )}
