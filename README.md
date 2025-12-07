@@ -2,7 +2,7 @@
 
 FinBoard is a highly customizable, modular, and scalable financial dashboard designed to visualize real-time market data. It allows users to create a personalized workspace with various widget types, supporting custom API integrations and flexible data mapping.
 
-![Dashboard Overview](./images/dash.png)
+![Dashboard Overview](./images/b_dash.png)
 
 ## Live Demo
 
@@ -42,6 +42,7 @@ Check out the live application deployed on Vercel:
 - **Custom API Support**: Connect to any JSON-based API.
 - **Configurable Fields**: Select exactly which data points to display using a powerful field selector with search functionality.
 - **Edit & Reconfigure**: Easily modify existing widgets to change data sources, fields, or visualization settings.
+- **Dark/Light Mode**: Seamless theme switching with smooth transitions and a persistent preference setting.
 
 ### Performance & Reliability
 - **Real-time Data**: Automatic polling with configurable refresh intervals for each widget.
@@ -63,6 +64,8 @@ Check out the live application deployed on Vercel:
 *Modify widget settings, refresh rates, and data mappings on the fly.*
 ![Edit Widget](./images/edit.png)
 
+### Light Mode
+![Dashboard-light Overview](./images/w_dash.png)
 ## Supported API Sources
 
 FinBoard includes built-in support and data mapping for major financial data providers, but is flexible enough to handle custom endpoints:

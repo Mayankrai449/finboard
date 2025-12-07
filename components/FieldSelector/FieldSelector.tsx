@@ -230,7 +230,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       {/* Available Fields Section */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg font-semibold text-foreground">
             {displayMode === 'table' && !selectedArrayPath 
               ? 'Select Array Field' 
               : displayMode === 'table' && selectedArrayPath
@@ -244,14 +244,14 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
               <button
                 type="button"
                 onClick={() => handleSelectAll(true)}
-                className="text-xs px-3 py-1.5 border border-gray-600 rounded text-white hover:text-[#00d4ff] hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1.5 border border-border rounded text-foreground hover:text-primary hover:border-primary transition-colors"
               >
                 Select All
               </button>
               <button
                 type="button"
                 onClick={() => handleSelectAll(false)}
-                className="text-xs px-3 py-1.5 border border-gray-600 rounded text-white hover:text-[#00d4ff] hover:border-[#00d4ff] transition-colors"
+                className="text-xs px-3 py-1.5 border border-border rounded text-foreground hover:text-primary hover:border-primary transition-colors"
               >
                 Unselect All
               </button>
@@ -260,28 +260,28 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
         </div>
         
         {displayMode === 'table' && !selectedArrayPath && (
-          <div className="mb-3 p-3 bg-[#1a1a2e] border border-[#00d4ff]/30 rounded-lg text-sm text-gray-300">
+          <div className="mb-3 p-3 bg-card border border-primary/30 rounded-lg text-sm text-muted-foreground">
             <div className="flex items-start gap-2">
-              <svg className="w-5 h-5 text-[#00d4ff] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="font-medium text-[#00d4ff] mb-1">Select one array field for your table</p>
-                <p className="text-xs text-gray-400">Each array represents a different dataset. For nested arrays, they will be automatically flattened.</p>
+                <p className="font-medium text-primary mb-1">Select one array field for your table</p>
+                <p className="text-xs text-muted-foreground">Each array represents a different dataset. For nested arrays, they will be automatically flattened.</p>
               </div>
             </div>
           </div>
         )}
         
         {displayMode === 'table' && selectedArrayPath && (
-          <div className="mb-3 p-3 bg-[#1a1a2e] border border-[#00ff88]/30 rounded-lg text-sm">
+          <div className="mb-3 p-3 bg-card border border-green-500/30 rounded-lg text-sm">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#00ff88]">
+              <div className="flex items-center gap-2 text-green-500">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="font-medium">Array selected:</span>
-                <code className="text-xs bg-[#0f0f1a] px-2 py-1 rounded">{selectedArrayPath}</code>
+                <code className="text-xs bg-background px-2 py-1 rounded">{selectedArrayPath}</code>
               </div>
               <button
                 type="button"
@@ -289,7 +289,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                   setSelectedArrayPath(null);
                   onFieldsChange([]);
                 }}
-                className="text-xs text-gray-400 hover:text-[#ff4d4d] transition-colors"
+                className="text-xs text-muted-foreground hover:text-red-500 transition-colors"
               >
                 Change Array
               </button>
@@ -303,46 +303,46 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
           placeholder="Search fields..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 bg-[#0f0f1a] border border-[#333] rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] mb-3"
+          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary mb-3"
         />
 
         {/* Fields List */}
-        <div className="max-h-64 overflow-y-auto bg-[#0f0f1a] border border-[#333] rounded-lg">
+        <div className="max-h-64 overflow-y-auto bg-background border border-border rounded-lg">
           {filteredFields.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 text-sm">
+            <div className="p-4 text-center text-muted-foreground text-sm">
               No fields found
             </div>
           ) : (
-            <div className="divide-y divide-[#333]/50">
+            <div className="divide-y divide-border/50">
               {filteredFields
                 .filter(field => field.type !== 'object') // Don't show object containers, only leaf values
                 .map((field) => (
                 <div
                   key={field.path}
                   onClick={() => handleToggleField(field)}
-                  className={`p-3 hover:bg-[#1a1a2e] cursor-pointer transition-colors ${
-                    isFieldSelected(field.path) ? 'bg-[#00d4ff]/10' : ''
+                  className={`p-3 hover:bg-muted cursor-pointer transition-colors ${
+                    isFieldSelected(field.path) ? 'bg-primary/10' : ''
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
                         isFieldSelected(field.path)
-                          ? 'bg-[#00d4ff] border-[#00d4ff]'
-                          : 'border-[#555] bg-transparent'
+                          ? 'bg-primary border-primary'
+                          : 'border-muted-foreground/50 bg-transparent'
                       }`}>
                         {isFieldSelected(field.path) && (
-                          <svg className="w-3 h-3 text-[#0f0f1a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
                         )}
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <div className="font-mono text-sm text-[#00d4ff] truncate">
+                        <div className="font-mono text-sm text-primary truncate">
                           {field.path}
                         </div>
-                        <div className="text-xs text-gray-400 mt-1 truncate">
+                        <div className="text-xs text-muted-foreground mt-1 truncate">
                           {field.type === 'array' ? (
                             <>
                               {field.value}
@@ -353,18 +353,18 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                               )}
                             </>
                           ) : (
-                            <>Value: <span className="text-gray-300">{String(field.value)}</span></>
+                            <>Value: <span className="text-foreground">{String(field.value)}</span></>
                           )}
                         </div>
                       </div>
                     </div>
                     
                     <span className={`text-xs px-2 py-0.5 rounded shrink-0 ${
-                      field.type === 'number' ? 'bg-green-500/20 text-green-300' :
-                      field.type === 'string' ? 'bg-blue-500/20 text-blue-300' :
-                      field.type === 'boolean' ? 'bg-purple-500/20 text-purple-300' :
-                      field.type === 'array' ? 'bg-yellow-500/20 text-yellow-300' :
-                      'bg-gray-500/20 text-gray-300'
+                      field.type === 'number' ? 'bg-green-500/20 text-green-500' :
+                      field.type === 'string' ? 'bg-blue-500/20 text-blue-500' :
+                      field.type === 'boolean' ? 'bg-purple-500/20 text-purple-500' :
+                      field.type === 'array' ? 'bg-yellow-500/20 text-yellow-500' :
+                      'bg-gray-500/20 text-gray-500'
                     }`}>
                       {field.type}
                     </span>
@@ -379,15 +379,15 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
       {/* Selected Fields Section */}
       {selectedFields.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-white mb-3">
+          <h3 className="text-lg font-semibold text-foreground mb-3">
             Selected Fields ({selectedFields.length})
           </h3>
           
-          <div className="max-h-68 overflow-y-auto bg-[#0f0f1a] border border-[#333] rounded-lg p-2 space-y-2">
+          <div className="max-h-68 overflow-y-auto bg-background border border-border rounded-lg p-2 space-y-2">
             {selectedFields.map((field, index) => (
               <div
                 key={field.path}
-                className="bg-[#1a1a2e] border border-[#333] rounded-lg p-3"
+                className="bg-card border border-border rounded-lg p-3"
               >
                 <div className="flex items-start gap-3">
                   {/* Move Up/Down Buttons */}
@@ -396,10 +396,10 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                       type="button"
                       onClick={() => moveField(index, 'up')}
                       disabled={index === 0}
-                      className="p-1 hover:bg-[#00d4ff]/20 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-1 hover:bg-primary/20 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                       title="Move up"
                     >
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                       </svg>
                     </button>
@@ -407,10 +407,10 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                       type="button"
                       onClick={() => moveField(index, 'down')}
                       disabled={index === selectedFields.length - 1}
-                      className="p-1 hover:bg-[#00d4ff]/20 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-1 hover:bg-primary/20 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                       title="Move down"
                     >
-                      <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
@@ -418,8 +418,8 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                   
                   <div className="flex-1 space-y-2">
                     {/* Path with Type inline */}
-                    <div className="font-mono text-xs text-gray-500">
-                      {field.path} <span className="text-[#00d4ff]">({field.type})</span>
+                    <div className="font-mono text-xs text-muted-foreground">
+                      {field.path} <span className="text-primary">({field.type})</span>
                     </div>
                     
                     {/* Label Input */}
@@ -428,7 +428,7 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                       value={field.label}
                       onChange={(e) => handleUpdateField(field.path, { label: e.target.value })}
                       placeholder="Field label"
-                      className="w-full px-2 py-1 bg-[#1a1a2e] border border-[#444] rounded text-white text-sm focus:outline-none focus:border-[#00d4ff]"
+                      className="w-full px-2 py-1 bg-background border border-border rounded text-foreground text-sm focus:outline-none focus:border-primary"
                     />
                   </div>
                   
@@ -436,10 +436,10 @@ export default function FieldSelector({ apiResponse, selectedFields, onFieldsCha
                   <button
                     type="button"
                     onClick={() => handleRemoveField(field.path)}
-                    className="p-1.5 hover:bg-[#ff4d4d]/20 rounded transition-colors group shrink-0"
+                    className="p-1.5 hover:bg-red-500/20 rounded transition-colors group shrink-0"
                     title="Remove field"
                   >
-                    <svg className="w-5 h-5 text-gray-400 group-hover:text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-muted-foreground group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>

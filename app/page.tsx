@@ -321,13 +321,13 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       <Navbar />
       
-      <div className="w-full px-4" style={{ paddingTop: '2rem' }}>
+      <div className="w-full px-4 pt-28 pb-8">
         {/* Error Message */}
         {error && (
-          <div className="max-w-6xl mx-auto mb-6 bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-4 text-[#ff4d4d] text-center">
+          <div className="max-w-6xl mx-auto mb-6 bg-red-900/20 border border-red-500 rounded-lg p-4 text-red-500 text-center">
             {error}
           </div>
         )}
@@ -387,7 +387,7 @@ export default function Home() {
                   />
                 )
               ) : (
-                <div className="h-full flex items-center justify-center bg-[#1a1a2e] rounded-xl border border-[#00d4ff]/20 text-gray-400">
+                <div className="h-full flex items-center justify-center bg-card rounded-xl border border-primary/20 text-muted-foreground">
                   Loading...
                 </div>
               )}
@@ -397,9 +397,9 @@ export default function Home() {
           <div key="add-button" className="relative">
             <button
               onClick={() => dispatch(setShowForm(true))}
-              className="w-full h-full border-2 border-dashed border-[#00d4ff]/30 rounded-xl flex flex-col items-center justify-center gap-3 text-[#00d4ff] hover:bg-[#00d4ff]/5 hover:border-[#00d4ff]/60 transition-all group cursor-pointer"
+              className="w-full h-full border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-3 text-primary hover:bg-primary/5 hover:border-primary/60 transition-all group cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-full bg-[#00d4ff]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>

@@ -248,12 +248,12 @@ export default function TableWidget({
   if (!selectedFields || columns.length === 0) {
     return (
       <div className="relative max-w-full mx-auto">
-        <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 p-8">
-          <div className="text-center text-gray-400">
+        <div className="relative bg-card rounded-xl shadow-xl border border-primary/20 p-8 transition-colors duration-300">
+          <div className="text-center text-muted-foreground">
             <p>No fields configured for table display</p>
             <button
               onClick={onEdit}
-              className="mt-4 px-4 py-2 bg-[#00d4ff] text-[#0f0f1a] rounded-lg font-medium hover:bg-[#00b8e6] transition-all"
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all"
             >
               Configure Widget
             </button>
@@ -265,19 +265,19 @@ export default function TableWidget({
 
   return (
     <div className="relative h-full flex flex-col">
-      <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
+      <div className="absolute -inset-0.5 bg-linear-to-r from-primary via-blue-600 to-primary rounded-xl blur opacity-10"></div>
       
       {/* Main Container */}
-      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
+      <div className="relative bg-card rounded-xl shadow-xl border border-primary/20 overflow-hidden flex flex-col h-full transition-colors duration-300">
         
         {/* Top Bar */}
-        <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-primary/40 to-transparent"></div>
         
         {/* Drag Handle */}
-        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-primary/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
+           <span className="mx-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-hidden flex flex-col">
@@ -285,14 +285,14 @@ export default function TableWidget({
           <div className="mb-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1 truncate">
+                <h2 className="text-2xl font-bold bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent mb-1 truncate">
                   {widgetName || 'Table Widget'}
                 </h2>
                 {widgetDescription && (
-                  <p className="text-gray-400 text-xs mt-1 line-clamp-1">{widgetDescription}</p>
+                  <p className="text-muted-foreground text-xs mt-1 line-clamp-1">{widgetDescription}</p>
                 )}
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {filteredData.length} {filteredData.length === 1 ? 'row' : 'rows'}
                   </span>
                 </div>
@@ -302,29 +302,29 @@ export default function TableWidget({
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={onRefresh}
-                  className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                  className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                   title="Refresh now"
                 >
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
                 <button
                   onClick={onEdit}
-                  className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                  className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                   title="Edit widget"
                 >
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </button>
                 <button
                   onClick={onDelete}
-                  className="p-2 hover:bg-[#ff4d4d]/10 rounded-lg transition-colors group"
+                  className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
                   title="Delete widget"
                 >
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-muted-foreground group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
@@ -340,27 +340,27 @@ export default function TableWidget({
                 placeholder="Search table..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f0f1a] border border-[#333] rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
               />
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-lg border border-[#333]/50">
+          <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#0f0f1a]">
+                <tr className="bg-muted/50">
                   {columns.map((col) => (
                     <th
                       key={col.path}
                       onClick={() => handleSort(col.path)}
-                      className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-[#1a1a2e] transition-colors"
+                      className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <span>{col.label}</span>
                         {sortField === col.path && (
                           <svg
-                            className={`w-4 h-4 text-[#00d4ff] transition-transform ${
+                            className={`w-4 h-4 text-primary transition-transform ${
                               sortDirection === 'desc' ? 'rotate-180' : ''
                             }`}
                             fill="none"
@@ -375,10 +375,10 @@ export default function TableWidget({
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#333]/30">
+              <tbody className="divide-y divide-border">
                 {paginatedData.length === 0 ? (
                   <tr>
-                    <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
                       {searchTerm ? 'No results found' : 'No data available'}
                     </td>
                   </tr>
@@ -386,14 +386,14 @@ export default function TableWidget({
                   paginatedData.map((row, rowIndex) => (
                     <tr
                       key={rowIndex}
-                      className="hover:bg-[#1a1a2e]/50 transition-colors"
+                      className="hover:bg-muted/30 transition-colors"
                     >
                       {columns.map((col) => {
                         const value = getValueByPath(row, col.path);
                         return (
                           <td
                             key={col.path}
-                            className="px-4 py-3 text-sm text-white"
+                            className="px-4 py-3 text-sm text-foreground"
                           >
                             {formatValue(value)}
                           </td>
@@ -410,15 +410,15 @@ export default function TableWidget({
           {filteredData.length > 0 && (
             <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-3">
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length}
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-400">Rows:</label>
+                  <label className="text-xs text-muted-foreground">Rows:</label>
                   <select
                     value={itemsPerPage}
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                    className="px-2 py-1 bg-[#0f0f1a] border border-[#333] rounded text-white text-xs focus:outline-none focus:border-[#00d4ff]"
+                    className="px-2 py-1 bg-background border border-border rounded text-foreground text-xs focus:outline-none focus:border-primary"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -433,7 +433,7 @@ export default function TableWidget({
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 bg-[#0f0f1a] border border-[#333] rounded-lg text-sm text-gray-400 hover:bg-[#1a1a2e] hover:text-[#00d4ff] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 bg-background border border-border rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -456,8 +456,8 @@ export default function TableWidget({
                         onClick={() => setCurrentPage(pageNum)}
                         className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
                           currentPage === pageNum
-                            ? 'bg-[#00d4ff] text-[#0f0f1a] font-medium'
-                            : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] hover:text-[#00d4ff]'
+                            ? 'bg-primary text-primary-foreground font-medium'
+                            : 'bg-background text-muted-foreground hover:bg-muted hover:text-primary'
                         }`}
                       >
                         {pageNum}
@@ -468,7 +468,7 @@ export default function TableWidget({
                 <button
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 bg-[#0f0f1a] border border-[#333] rounded-lg text-sm text-gray-400 hover:bg-[#1a1a2e] hover:text-[#00d4ff] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 bg-background border border-border rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -478,14 +478,14 @@ export default function TableWidget({
           )}
 
           {/* Footer Info */}
-          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-border">
             <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
             <span>Refresh: {formatRefreshRate(refreshRate)}</span>
           </div>
         </div>
 
         {/* Bottom Accent */}
-        <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/20 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-primary/20 to-transparent"></div>
       </div>
     </div>
   );

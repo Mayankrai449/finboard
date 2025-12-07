@@ -1,11 +1,45 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+/* Custom variant for dark mode based on class */
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f3f4f6;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --border: #e5e7eb;
+  --primary: #0070f3;
+  --primary-foreground: #ffffff;
+}
+
+.dark {
+  --background: #0f0f1a;
+  --foreground: #e0e0e0;
+  --card: #1a1a2e;
+  --card-foreground: #e0e0e0;
+  --border: #333333;
+  --primary: #00d4ff;
+  --primary-foreground: #0f0f1a;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #0f0f1a;
-  color: #e0e0e0;
+  background-color: var(--background);
+  color: var(--foreground);
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -24,10 +58,11 @@ body {
   flex: 1;
   padding: 12px;
   font-size: 16px;
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background-color: #1a1a2e;
-  color: #e0e0e0;
+  background-color: var(--card);
+  color: var(--foreground);
+  transition: all 0.3s ease;
 }
 
 .search-box input::placeholder {
@@ -37,22 +72,23 @@ body {
 .search-box button {
   padding: 12px 24px;
   font-size: 16px;
-  background-color: #00d4ff;
-  color: #0f0f1a;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .search-box button:hover {
-  background-color: #00b8e6;
+  opacity: 0.9;
 }
 
 /* React Grid Layout Styles */
 .react-grid-item.react-grid-placeholder {
   background: rgba(0, 212, 255, 0.1) !important;
-  border: 2px dashed #00d4ff !important;
+  border: 2px dashed var(--primary) !important;
   border-radius: 12px !important;
   opacity: 0.5 !important;
 }
@@ -74,37 +110,38 @@ body {
   bottom: 5px;
   width: 20px;
   height: 20px;
-  border-right: 5px solid #66e0ff;
-  border-bottom: 5px solid #66e0ff;
+  border-right: 5px solid var(--primary);
+  border-bottom: 5px solid var(--primary);
   border-bottom-right-radius: 3px;
   box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
   transition: all 0.2s ease;
 }
 
 .react-resizable-handle:hover::after {
-  border-color: #fff;
+  border-color: var(--foreground);
   transform: scale(1.1);
-  box-shadow: 0 0 10px #66e0ff;
+  box-shadow: 0 0 10px var(--primary);
 }
 
 .stock-info {
-  background-color: #1a1a2e;
+  background-color: var(--card);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border: 1px solid #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .stock-info h2 {
   margin-bottom: 20px;
-  color: #00d4ff;
+  color: var(--primary);
 }
 
 .stock-info .row {
   display: flex;
   justify-content: space-between;
   padding: 10px 10px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border);
 }
 
 .stock-info .row:last-child {
@@ -117,14 +154,20 @@ body {
 }
 
 .stock-info .value {
-  color: #e0e0e0;
+  color: var(--foreground);
 }
 
 .positive {
+  color: #059669;
+}
+.dark .positive {
   color: #00ff88;
 }
 
 .negative {
+  color: #dc2626;
+}
+.dark .negative {
   color: #ff4d4d;
 }
 
@@ -135,7 +178,7 @@ body {
 }
 
 .error {
-  background-color: #2a1a1a;
+  background-color: rgba(255, 77, 77, 0.1);
   color: #ff4d4d;
   padding: 15px;
   border-radius: 4px;

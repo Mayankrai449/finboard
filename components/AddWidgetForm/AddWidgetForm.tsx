@@ -195,23 +195,23 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-4 overflow-y-auto">
       <div ref={formRef} className="relative max-w-2xl w-full my-8">
         {/* Glow effect */}
-        <div className="absolute -inset-1 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-2xl blur-lg opacity-20"></div>
+        <div className="absolute -inset-1 bg-linear-to-r from-primary via-blue-600 to-primary rounded-2xl blur-lg opacity-20"></div>
         
         {/* Form container */}
-        <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl border border-[#00d4ff]/20 p-6 shadow-2xl">
+        <div className="relative bg-card rounded-2xl border border-primary/20 p-6 shadow-2xl transition-colors duration-300">
           {/* Header */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1">
+            <h2 className="text-2xl font-bold bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent mb-1">
               {initialData ? 'Edit Widget' : 'Add Stock Widget'}
             </h2>
-            <p className="text-gray-400 text-sm">{initialData ? 'Update your widget settings' : 'Configure your custom stock widget'}</p>
+            <p className="text-muted-foreground text-sm">{initialData ? 'Update your widget settings' : 'Configure your custom stock widget'}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Widget Name Input */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                Widget Name <span className="text-[#ff4d4d]">*</span>
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                Widget Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -219,7 +219,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Apple Stock Tracker"
-                className="w-full px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 autoFocus
                 disabled={isConnecting}
               />
@@ -227,8 +227,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
 
             {/* Description Input */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
-                Description <span className="text-gray-500 text-xs">(optional)</span>
+              <label htmlFor="description" className="block text-sm font-medium text-foreground mb-2">
+                Description <span className="text-muted-foreground text-xs">(optional)</span>
               </label>
               <input
                 type="text"
@@ -236,15 +236,15 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g., Real-time Apple stock monitoring"
-                className="w-full px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 disabled={isConnecting}
               />
             </div>
 
             {/* API URL Input */}
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-300 mb-2">
-                API URL <span className="text-[#ff4d4d]">*</span>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-foreground mb-2">
+                API URL <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -253,7 +253,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   value={apiUrl}
                   onChange={(e) => setApiUrl(e.target.value)}
                   placeholder="e.g., https://api.coinbase.com/v2/exchange-rates?currency=BTC"
-                  className="flex-1 px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                  className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   disabled={isConnecting}
                 />
                 {isConnected && (
@@ -261,7 +261,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                     type="button"
                     onClick={handleConnect}
                     disabled={isConnecting || !apiUrl.trim()}
-                    className="px-4 py-3 bg-[#00d4ff] text-[#0f0f1a] rounded-lg font-medium hover:bg-[#00b8e6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Reconnect with updated URL"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,25 +272,25 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               </div>
               <div className="mt-2">
                 <details className="mt-2">
-                  <summary className="text-xs text-[#00d4ff] cursor-pointer hover:text-[#00b8e6] transition-colors">
+                  <summary className="text-xs text-primary cursor-pointer hover:text-primary/80 transition-colors">
                     Supported APIs
                   </summary>
-                  <div className="mt-2 p-3 bg-[#0f0f1a] rounded-lg border border-[#333] space-y-2 text-xs text-gray-400">
+                  <div className="mt-2 p-3 bg-background rounded-lg border border-border space-y-2 text-xs text-muted-foreground">
                     <div>
-                      <span className="text-[#00d4ff] font-medium">Twelve Data:</span>
-                      <code className="block mt-1 text-[10px] text-gray-500">api.twelvedata.com/...</code>
+                      <span className="text-primary font-medium">Twelve Data:</span>
+                      <code className="block mt-1 text-[10px] text-muted-foreground">api.twelvedata.com/...</code>
                     </div>
                     <div>
-                      <span className="text-[#00d4ff] font-medium">Alpha Vantage:</span>
-                      <code className="block mt-1 text-[10px] text-gray-500">alphavantage.co/query?...</code>
+                      <span className="text-primary font-medium">Alpha Vantage:</span>
+                      <code className="block mt-1 text-[10px] text-muted-foreground">alphavantage.co/query?...</code>
                     </div>
                     <div>
-                      <span className="text-[#00d4ff] font-medium">Finnhub:</span>
-                      <code className="block mt-1 text-[10px] text-gray-500">finnhub.io/api/v1/...</code>
+                      <span className="text-primary font-medium">Finnhub:</span>
+                      <code className="block mt-1 text-[10px] text-muted-foreground">finnhub.io/api/v1/...</code>
                     </div>
                     <div>
-                      <span className="text-[#00d4ff] font-medium">Indian Stock API:</span>
-                      <code className="block mt-1 text-[10px] text-gray-500">stock.indianapi.in/...</code>
+                      <span className="text-primary font-medium">Indian Stock API:</span>
+                      <code className="block mt-1 text-[10px] text-muted-foreground">stock.indianapi.in/...</code>
                     </div>
                   </div>
                 </details>
@@ -299,8 +299,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
 
             {/* Refresh Rate Input */}
             <div>
-              <label htmlFor="refreshRate" className="block text-sm font-medium text-gray-300 mb-2">
-                Refresh Interval (seconds) <span className="text-[#ff4d4d]">*</span>
+              <label htmlFor="refreshRate" className="block text-sm font-medium text-foreground mb-2">
+                Refresh Interval (seconds) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -310,16 +310,16 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 min="1"
                 max="600"
                 step="1"
-                className="w-full px-4 py-3 bg-[#0f0f1a] border border-[#333] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff] focus:ring-1 focus:ring-[#00d4ff] transition-all"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 disabled={isConnecting}
               />
-              <p className="text-xs text-gray-500 mt-1">Range: 1-600 seconds (1s - 10min)</p>
+              <p className="text-xs text-muted-foreground mt-1">Range: 1-600 seconds (1s - 10min)</p>
             </div>
 
             {/* Display Mode Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Display Mode <span className="text-[#ff4d4d]">*</span>
+              <label className="block text-sm font-medium text-foreground mb-3">
+                Display Mode <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -334,8 +334,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   disabled={isConnecting}
                   className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     displayMode === 'card'
-                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'bg-background text-muted-foreground hover:bg-muted border border-border'
                   } ${isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,8 +349,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   disabled={isConnecting}
                   className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     displayMode === 'table'
-                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'bg-background text-muted-foreground hover:bg-muted border border-border'
                   } ${isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,8 +364,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   disabled={isConnecting || (isConnected && !hasValidOHLCData(apiResponse))}
                   className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     displayMode === 'chart'
-                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'bg-background text-muted-foreground hover:bg-muted border border-border'
                   } ${(isConnecting || (isConnected && !hasValidOHLCData(apiResponse))) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -374,7 +374,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   Chart
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 {displayMode === 'card' 
                   ? 'Card view displays individual fields. Best for simple data structures.'
                   : displayMode === 'table'
@@ -386,8 +386,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               {isConnected && ohlcValidationMessage && (
                 <div className={`mt-2 text-xs p-2 rounded ${
                   ohlcValidationMessage === 'OHLC Data available for Charts'
-                    ? 'bg-green-900/20 text-green-400 border border-green-500/30' 
-                    : 'bg-yellow-900/20 text-yellow-400 border border-yellow-500/30'
+                    ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/30' 
+                    : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/30'
                 }`}>
                   {ohlcValidationMessage}
                 </div>
@@ -396,7 +396,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               {/* Chart Type Selection - Only show for chart mode */}
               {displayMode === 'chart' && (
                 <div className="mt-3">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Chart Type
                   </label>
                   <div className="flex gap-2">
@@ -405,8 +405,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                       onClick={() => setChartType('candlestick')}
                       className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
                         chartType === 'candlestick'
-                          ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                          : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                          : 'bg-background text-muted-foreground hover:bg-muted border border-border'
                       } cursor-pointer`}
                     >
                       Candlestick
@@ -416,8 +416,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                       onClick={() => setChartType('linear')}
                       className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
                         chartType === 'linear'
-                          ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
-                          : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                          : 'bg-background text-muted-foreground hover:bg-muted border border-border'
                       } cursor-pointer`}
                     >
                       Linear
@@ -434,7 +434,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   type="button"
                   onClick={handleConnect}
                   disabled={isConnecting || !apiUrl.trim()}
-                  className="w-full px-4 py-3 bg-linear-to-r from-[#00d4ff] to-[#0066ff] text-[#0f0f1a] rounded-lg font-bold hover:from-[#00b8e6] hover:to-[#0055cc] transition-all shadow-lg shadow-[#00d4ff]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="w-full px-4 py-3 bg-linear-to-r from-primary to-blue-600 text-primary-foreground rounded-lg font-bold hover:from-primary/90 hover:to-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isConnecting ? 'Connecting...' : 'Connect'}
                 </button>
@@ -443,7 +443,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
 
             {/* Field Selector - Shows after successful connection (not for chart mode) */}
             {isConnected && apiResponse && displayMode !== 'chart' && (
-              <div className="pt-4 border-t border-[#333]/30 animate-slideDown">
+              <div className="pt-4 border-t border-border animate-slideDown">
                 <FieldSelector
                   apiResponse={apiResponse}
                   selectedFields={selectedFields}
@@ -455,16 +455,16 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
             
             {/* Chart Mode Info/Error */}
             {isConnected && apiResponse && displayMode === 'chart' && (
-              <div className="pt-4 border-t border-[#333]/30 animate-slideDown">
+              <div className="pt-4 border-t border-border animate-slideDown">
                 {hasValidOHLCData(apiResponse) ? (
-                  <div className="bg-[#0f0f1a]/50 rounded-lg p-4 border border-[#00d4ff]/20">
+                  <div className="bg-background/50 rounded-lg p-4 border border-primary/20">
                     <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-[#00d4ff] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>
-                        <h4 className="text-sm font-medium text-white mb-1">Chart Mode Enabled</h4>
-                        <p className="text-xs text-gray-400">
+                        <h4 className="text-sm font-medium text-foreground mb-1">Chart Mode Enabled</h4>
+                        <p className="text-xs text-muted-foreground">
                           Charts automatically display OHLC (Open, High, Low, Close) data from the API response. 
                           No field selection is required. The chart will display all available time series data.
                         </p>
@@ -472,14 +472,14 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-[#2a1a1a] rounded-lg p-4 border border-[#ff4d4d]/50">
+                  <div className="bg-red-900/20 rounded-lg p-4 border border-red-500/50">
                     <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-[#ff4d4d] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                       <div>
-                        <h4 className="text-sm font-medium text-[#ff4d4d] mb-1">Valid Format Not Found</h4>
-                        <p className="text-xs text-gray-400">
+                        <h4 className="text-sm font-medium text-red-500 mb-1">Valid Format Not Found</h4>
+                        <p className="text-xs text-muted-foreground">
                           Charts display mode is not available. The API response does not contain valid OHLC (Open, High, Low, Close) time series data required for chart visualization.
                         </p>
                       </div>
@@ -491,7 +491,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
 
             {/* Error Message */}
             {error && (
-              <div className="bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-3 text-[#ff4d4d] text-sm">
+              <div className="bg-red-900/20 border border-red-500 rounded-lg p-3 text-red-500 text-sm">
                 {error}
               </div>
             )}
@@ -499,7 +499,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
             {/* Bottom Buttons */}
             <div className="flex flex-col gap-2 pt-2">
               {isConnecting && !isConnected && (
-                <div className="text-sm text-gray-400 text-center py-2">
+                <div className="text-sm text-muted-foreground text-center py-2">
                   Loading fields...
                 </div>
               )}
@@ -507,7 +507,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 <button
                   type="button"
                   onClick={() => setIsConnected(false)}
-                  className="px-4 py-2 text-sm text-gray-400 hover:text-[#00d4ff] transition-colors text-left cursor-pointer"
+                  className="px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-colors text-left cursor-pointer"
                 >
                   ← Reconnect to modify fields
                 </button>
@@ -516,7 +516,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-3 bg-[#0f0f1a] border border-[#333] text-gray-300 rounded-lg font-medium hover:bg-[#1a1a2e] hover:border-[#444] transition-all cursor-pointer"
+                  className="flex-1 px-4 py-3 bg-background border border-border text-muted-foreground rounded-lg font-medium hover:bg-muted hover:border-foreground/20 transition-all cursor-pointer"
                   disabled={isConnecting}
                 >
                   Cancel
@@ -525,7 +525,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                 {isConnected && (
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-linear-to-r from-[#00ff88] to-[#00cc6a] text-[#0f0f1a] rounded-lg font-bold hover:from-[#00dd77] hover:to-[#00bb5e] transition-all shadow-lg shadow-[#00ff88]/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-3 bg-linear-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {initialData ? 'Update Widget' : 'Add Widget'}
                   </button>

@@ -66,6 +66,12 @@ export default function ChartWidget({
     const ctx = chartRef.current.getContext('2d');
     if (!ctx) return;
 
+    // Get theme colors
+    const rootStyle = getComputedStyle(document.documentElement);
+    const primaryColor = rootStyle.getPropertyValue('--primary').trim() || '#00d4ff';
+    const gridColor = 'rgba(128, 128, 128, 0.1)';
+    const textColor = rootStyle.getPropertyValue('--muted-foreground').trim() || '#888';
+
     // Prepare data based on chart type
     let chartConfig: ChartConfiguration;
 
@@ -88,7 +94,17 @@ export default function ChartWidget({
             {
               label: widgetName || 'OHLC Data',
               data: candlestickData as any,
-            },
+              color: {
+                up: '#22c55e', // green-500
+                down: '#ef4444', // red-500
+                unchanged: '#9ca3af', // gray-400
+              },
+              borderColor: {
+                up: '#22c55e',
+                down: '#ef4444',
+                unchanged: '#9ca3af',
+              }
+            } as any,
           ],
         },
         options: {
@@ -101,9 +117,9 @@ export default function ChartWidget({
             tooltip: {
               enabled: true,
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              titleColor: '#00d4ff',
+              titleColor: primaryColor,
               bodyColor: '#ffffff',
-              borderColor: '#00d4ff',
+              borderColor: primaryColor,
               borderWidth: 1,
               padding: 12,
               displayColors: false,
@@ -116,18 +132,18 @@ export default function ChartWidget({
                 unit: 'minute',
               },
               grid: {
-                color: 'rgba(0, 212, 255, 0.1)',
+                color: gridColor,
               },
               ticks: {
-                color: '#888',
+                color: textColor,
               },
             },
             y: {
               grid: {
-                color: 'rgba(0, 212, 255, 0.1)',
+                color: gridColor,
               },
               ticks: {
-                color: '#888',
+                color: textColor,
               },
             },
           },
@@ -149,13 +165,13 @@ export default function ChartWidget({
             {
               label: widgetName || 'Close Price',
               data: linearData,
-              borderColor: '#00d4ff',
-              backgroundColor: 'rgba(0, 212, 255, 0.1)',
+              borderColor: primaryColor,
+              backgroundColor: `${primaryColor}1A`, // 10% opacity
               borderWidth: 2,
               fill: true,
               tension: 0.4,
               pointRadius: 3,
-              pointBackgroundColor: '#00d4ff',
+              pointBackgroundColor: primaryColor,
               pointBorderColor: '#fff',
               pointBorderWidth: 1,
               pointHoverRadius: 5,
@@ -172,9 +188,9 @@ export default function ChartWidget({
             tooltip: {
               enabled: true,
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              titleColor: '#00d4ff',
+              titleColor: primaryColor,
               bodyColor: '#ffffff',
-              borderColor: '#00d4ff',
+              borderColor: primaryColor,
               borderWidth: 1,
               padding: 12,
               displayColors: false,
@@ -188,20 +204,20 @@ export default function ChartWidget({
               },
               grid: {
                 display: true,
-                color: 'rgba(0, 212, 255, 0.1)',
+                color: gridColor,
               },
               ticks: {
-                color: '#888',
+                color: textColor,
               },
             },
             y: {
               type: 'linear',
               grid: {
                 display: true,
-                color: 'rgba(0, 212, 255, 0.1)',
+                color: gridColor,
               },
               ticks: {
-                color: '#888',
+                color: textColor,
               },
             },
           },
@@ -225,18 +241,18 @@ export default function ChartWidget({
 
   return (
     <div className="relative h-full flex flex-col">
-      <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
+      <div className="absolute -inset-0.5 bg-linear-to-r from-primary via-blue-600 to-primary rounded-xl blur opacity-10"></div>
 
       {/* Main Card */}
-      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
+      <div className="relative bg-card rounded-xl shadow-xl border border-primary/20 overflow-hidden flex flex-col h-full transition-colors duration-300">
         {/* Top Bar */}
-        <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-primary/40 to-transparent"></div>
 
         {/* Drag Handle */}
-        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-primary/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-muted-foreground/50 rounded-full group-hover:bg-primary transition-colors"></div>
+           <span className="mx-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-muted-foreground/50 rounded-full group-hover:bg-primary transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-hidden flex flex-col">
@@ -244,18 +260,18 @@ export default function ChartWidget({
           <div className="flex justify-between items-start mb-4 shrink-0">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent truncate">
+                <h2 className="text-2xl font-bold bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent truncate">
                   {widgetName || 'Chart Widget'}
                 </h2>
-                <span className="px-2 py-1 bg-[#00d4ff]/10 border border-[#00d4ff]/30 rounded text-xs text-[#00d4ff] font-medium">
+                <span className="px-2 py-1 bg-primary/10 border border-primary/30 rounded text-xs text-primary font-medium">
                   {chartType === 'candlestick' ? 'Candlestick' : 'Linear'}
                 </span>
               </div>
               {widgetDescription && (
-                <p className="text-sm text-gray-400">{widgetDescription}</p>
+                <p className="text-sm text-muted-foreground">{widgetDescription}</p>
               )}
               {mappingResult && mappingResult.format !== 'unknown' && (
-                <div className="flex gap-3 mt-2 text-xs text-gray-500">
+                <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
                   <span>Source: {mappingResult.format}</span>
                   {mappingResult.symbol && <span>Symbol: {mappingResult.symbol}</span>}
                   {mappingResult.interval && <span>Interval: {mappingResult.interval}</span>}
@@ -267,29 +283,29 @@ export default function ChartWidget({
             <div className="flex gap-2">
               <button
                 onClick={onRefresh}
-                className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                 title="Refresh now"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               </button>
               <button
                 onClick={onEdit}
-                className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                 title="Edit widget"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
               <button
                 onClick={onDelete}
-                className="p-2 hover:bg-[#ff4d4d]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
                 title="Delete widget"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </button>
@@ -298,14 +314,14 @@ export default function ChartWidget({
 
           {/* Chart or Error Message */}
           {isValidData ? (
-            <div className="relative h-[400px] bg-[#0f0f1a]/50 rounded-lg p-4">
+            <div className="relative h-[400px] bg-background/50 rounded-lg p-4">
               <canvas ref={chartRef}></canvas>
             </div>
           ) : (
-            <div className="relative h-[400px] bg-[#0f0f1a]/50 rounded-lg p-8 flex items-center justify-center">
+            <div className="relative h-[400px] bg-background/50 rounded-lg p-8 flex items-center justify-center">
               <div className="text-center">
                 <svg
-                  className="w-16 h-16 text-gray-600 mx-auto mb-4"
+                  className="w-16 h-16 text-muted-foreground mx-auto mb-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

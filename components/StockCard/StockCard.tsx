@@ -88,19 +88,19 @@ export default function StockCard({
   if (useCustomFields) {
     return (
       <div className="relative h-full flex flex-col">
-        <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
+        <div className="absolute -inset-0.5 bg-linear-to-r from-primary via-blue-600 to-primary rounded-xl blur opacity-10"></div>
         
         {/* Main Card */}
-        <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
+        <div className="relative bg-card rounded-xl shadow-xl border border-primary/20 overflow-hidden flex flex-col h-full transition-colors duration-300">
           
           {/* Top Bar */}
-          <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
+          <div className="h-px bg-linear-to-r from-transparent via-primary/40 to-transparent"></div>
           
         {/* Drag Handle */}
-        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-primary/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
+           <span className="mx-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">
@@ -108,11 +108,11 @@ export default function StockCard({
             <div className="mb-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1 truncate">
+                  <h2 className="text-2xl font-bold bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent mb-1 truncate">
                     {widgetName || stockData.companyName}
                   </h2>
                   {widgetDescription && (
-                    <p className="text-gray-400 text-xs mt-1 line-clamp-1">{widgetDescription}</p>
+                    <p className="text-muted-foreground text-xs mt-1 line-clamp-1">{widgetDescription}</p>
                   )}
                 </div>
                 
@@ -120,29 +120,29 @@ export default function StockCard({
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={onRefresh}
-                    className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                    className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                     title="Refresh now"
                   >
-                    <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                   </button>
                   <button
                     onClick={onEdit}
-                    className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                    className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                     title="Edit widget"
                   >
-                    <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </button>
                   <button
                     onClick={onDelete}
-                    className="p-2 hover:bg-[#ff4d4d]/10 rounded-lg transition-colors group"
+                    className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
                     title="Delete widget"
                   >
-                    <svg className="w-4 h-4 text-gray-400 group-hover:text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-muted-foreground group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
@@ -170,7 +170,7 @@ export default function StockCard({
             </div>
 
             {/* Footer Info */}
-            <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+            <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-border">
               <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
               <span>Refresh: {formatRefreshRate(refreshRate)}</span>
             </div>
@@ -183,26 +183,26 @@ export default function StockCard({
   // Default display
   return (
     <div className="relative h-full flex flex-col">
-      <div className="absolute -inset-0.5 bg-linear-to-r from-[#00d4ff] via-[#0066ff] to-[#00d4ff] rounded-xl blur opacity-10"></div>
+      <div className="absolute -inset-0.5 bg-linear-to-r from-primary via-blue-600 to-primary rounded-xl blur opacity-10"></div>
       
       {/* Main Card */}
-      <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-xl shadow-xl border border-[#00d4ff]/20 overflow-hidden flex flex-col h-full">
+      <div className="relative bg-card rounded-xl shadow-xl border border-primary/20 overflow-hidden flex flex-col h-full transition-colors duration-300">
         
         {/* Top Bar */}
-        <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-primary/40 to-transparent"></div>
         
         {/* Drag Handle */}
-        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-[#00d4ff]/5 transition-colors shrink-0 group">
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
-           <span className="mx-2 text-[10px] text-gray-500 uppercase tracking-wider font-medium">Drag to move</span>
-           <div className="w-8 h-1 bg-gray-600 rounded-full group-hover:bg-[#00d4ff] transition-colors"></div>
+        <div className="drag-handle h-6 w-full cursor-move flex items-center justify-center hover:bg-primary/5 transition-colors shrink-0 group">
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
+           <span className="mx-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Drag to move</span>
+           <div className="w-8 h-1 bg-gray-400 dark:bg-gray-600 rounded-full group-hover:bg-primary transition-colors"></div>
         </div>
 
         <div className="px-4 pt-4 pb-2 flex-1 overflow-auto">
             {/* Header Section */}
           <div className="mb-4 flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h2 className="text-2xl font-bold bg-linear-to-r from-[#00d4ff] to-[#00b8e6] bg-clip-text text-transparent mb-1 truncate">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent mb-1 truncate">
                 {stockData.companyName}
               </h2>
             </div>
@@ -211,29 +211,29 @@ export default function StockCard({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={onRefresh}
-                className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                 title="Refresh now"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               </button>
               <button
                 onClick={onEdit}
-                className="p-2 hover:bg-[#00d4ff]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                 title="Edit widget"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#00d4ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
               <button
                 onClick={onDelete}
-                className="p-2 hover:bg-[#ff4d4d]/10 rounded-lg transition-colors group"
+                className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
                 title="Delete widget"
               >
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted-foreground group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </button>
@@ -241,24 +241,24 @@ export default function StockCard({
           </div>
 
           {/* Price Section */}
-          <div className="mb-4 pb-4 border-b border-[#333]/30">
+          <div className="mb-4 pb-4 border-b border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide font-semibold">Current Price</p>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide font-semibold">Current Price</p>
+                <p className="text-3xl font-bold text-foreground">
                   ${stockData.currentPrice.toFixed(2)}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide font-semibold">Change</p>
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide font-semibold">Change</p>
                 <div className="flex items-baseline justify-end gap-2">
                   <p className={`text-xl font-bold ${
-                    stockData.change >= 0 ? 'text-[#00ff88]' : 'text-[#ff4d4d]'
+                    stockData.change >= 0 ? 'text-green-600 dark:text-[#00ff88]' : 'text-red-600 dark:text-[#ff4d4d]'
                   }`}>
                     {stockData.change >= 0 ? '↗' : '↘'} {stockData.change >= 0 ? '+' : ''}{stockData.change.toFixed(2)}
                   </p>
                   <p className={`text-sm font-semibold ${
-                    stockData.change >= 0 ? 'text-[#00ff88]/80' : 'text-[#ff4d4d]/80'
+                    stockData.change >= 0 ? 'text-green-600/80 dark:text-[#00ff88]/80' : 'text-red-600/80 dark:text-[#ff4d4d]/80'
                   }`}>
                     ({stockData.changePercent.toFixed(2)}%)
                   </p>
@@ -276,31 +276,31 @@ export default function StockCard({
           </div>
 
           {/* Info Section */}
-          <div className="space-y-0 pt-4 border-t border-[#333]/30">
+          <div className="space-y-0 pt-4 border-t border-border">
             <div>
               <div className="flex items-center justify-between py-3">
-                <span className="text-xs text-gray-400 font-medium">Industry</span>
-                <span className="text-sm font-medium text-white">{stockData.industry}</span>
+                <span className="text-xs text-muted-foreground font-medium">Industry</span>
+                <span className="text-sm font-medium text-foreground">{stockData.industry}</span>
               </div>
-              <div className="h-px bg-[#333]/30"></div>
+              <div className="h-px bg-border"></div>
             </div>
             <div>
               <div className="flex items-center justify-between py-3">
-                <span className="text-xs text-gray-400 font-medium">Country</span>
-                <span className="text-sm font-medium text-white">{stockData.country}</span>
+                <span className="text-xs text-muted-foreground font-medium">Country</span>
+                <span className="text-sm font-medium text-foreground">{stockData.country}</span>
               </div>
             </div>
           </div>
 
           {/* Footer Info */}
-          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-border">
             <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
             <span>Refresh: {formatRefreshRate(refreshRate)}</span>
           </div>
         </div>
 
         {/* Bottom Accent */}
-        <div className="h-px bg-linear-to-r from-transparent via-[#00d4ff]/20 to-transparent"></div>
+        <div className="h-px bg-linear-to-r from-transparent via-primary/20 to-transparent"></div>
       </div>
     </div>
   );
