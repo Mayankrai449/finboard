@@ -109,9 +109,6 @@ export default function StockCard({
                   )}
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-gray-400 text-sm font-medium">({stockData.symbol})</span>
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#0f0f1a] border border-[#00d4ff]/30">
-                      <span className="text-xs text-gray-400">{formatRefreshRate(refreshRate)}</span>
-                    </div>
                   </div>
                 </div>
                 
@@ -147,11 +144,6 @@ export default function StockCard({
                   </button>
                 </div>
               </div>
-              
-              {/* Last Updated */}
-              <div className="text-xs text-gray-500 mt-2">
-                Last updated: {formatLastUpdated(lastUpdated)}
-              </div>
             </div>
 
             {/* Custom Fields Section */}
@@ -171,6 +163,12 @@ export default function StockCard({
                   </div>
                 );
               })}
+            </div>
+
+            {/* Footer Info */}
+            <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+              <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
+              <span>Refresh: {formatRefreshRate(refreshRate)}</span>
             </div>
           </div>
         </div>
@@ -198,12 +196,6 @@ export default function StockCard({
               </h2>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-gray-400 text-sm font-medium">({stockData.symbol})</span>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#0f0f1a] border border-[#00d4ff]/30">
-                  <span className="text-xs text-gray-400">{formatRefreshRate(refreshRate)}</span>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500 mt-2">
-                Last updated: {formatLastUpdated(lastUpdated)}
               </div>
             </div>
             
@@ -290,6 +282,12 @@ export default function StockCard({
                 <span className="text-sm font-medium text-white">{stockData.country}</span>
               </div>
             </div>
+          </div>
+
+          {/* Footer Info */}
+          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+            <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
+            <span>Refresh: {formatRefreshRate(refreshRate)}</span>
           </div>
         </div>
 

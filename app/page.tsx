@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import StockCard from '@/components/StockCard';
 import TableWidget from '@/components/TableWidget';
+import ChartWidget from '@/components/ChartWidget';
 import AddWidgetForm from '@/components/AddWidgetForm';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import {
@@ -110,8 +111,9 @@ export default function Home() {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
-    displayMode: 'card' | 'table',
-    customApiUrl?: string
+    displayMode: 'card' | 'table' | 'chart',
+    customApiUrl?: string,
+    chartType?: 'candlestick' | 'linear'
   ) => {
     const id = `${symbol}-${Date.now()}`;
     
@@ -132,6 +134,7 @@ export default function Home() {
       rawData: null,
       lastUpdated: new Date().toISOString(),
       displayMode,
+      chartType,
     };
 
     dispatch(addWidget(newWidget));
@@ -196,8 +199,9 @@ export default function Home() {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
-    displayMode: 'card' | 'table',
-    customApiUrl?: string
+    displayMode: 'card' | 'table' | 'chart',
+    customApiUrl?: string,
+    chartType?: 'candlestick' | 'linear'
   ) => {
     if (!editingWidget) return;
 
@@ -224,6 +228,7 @@ export default function Home() {
         type: f.type
       })),
       displayMode,
+      chartType,
     };
 
     dispatch(updateWidget(updatedWidget));
@@ -292,7 +297,20 @@ export default function Home() {
         <div className="space-y-6">
           {widgets.map((widget) => (
             <div key={widget.id} className="relative">
-              {widget.data ? (
+              {widget.displayMode === 'chart' ? (
+                // Chart widgets display with just rawData
+                <ChartWidget
+                  widgetName={widget.name}
+                  widgetDescription={widget.description}
+                  rawData={widget.rawData}
+                  chartType={widget.chartType || 'candlestick'}
+                  refreshRate={widget.refreshRate}
+                  lastUpdated={widget.lastUpdated || new Date().toISOString()}
+                  onRefresh={() => handleRefreshWidget(widget.id, widget.symbol, widget.customApiUrl)}
+                  onEdit={() => handleEditWidget(widget)}
+                  onDelete={() => handleRemoveWidget(widget.id)}
+                />
+              ) : widget.data ? (
                 widget.displayMode === 'table' ? (
                   <TableWidget
                     widgetName={widget.name}
@@ -363,6 +381,7 @@ export default function Home() {
             })),
             activeTab: editingWidget.customApiUrl ? 'api-url' as const : 'symbol' as const,
             displayMode: editingWidget.displayMode || 'card',
+            chartType: editingWidget.chartType,
           } : undefined}
         />
       )}

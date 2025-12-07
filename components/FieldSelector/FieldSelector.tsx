@@ -6,7 +6,7 @@ interface FieldSelectorProps {
   apiResponse: any;
   selectedFields: SelectedFieldItem[];
   onFieldsChange: (fields: SelectedFieldItem[]) => void;
-  displayMode?: 'card' | 'table';
+  displayMode?: 'card' | 'table' | 'chart';
 }
 
 export interface SelectedFieldItem {

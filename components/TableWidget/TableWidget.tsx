@@ -285,9 +285,6 @@ export default function TableWidget({
                   <p className="text-gray-400 text-xs mt-1 line-clamp-1">{widgetDescription}</p>
                 )}
                 <div className="flex items-center gap-2 mt-2">
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#0f0f1a] border border-[#00d4ff]/30">
-                    <span className="text-xs text-gray-400">{formatRefreshRate(refreshRate)}</span>
-                  </div>
                   <span className="text-xs text-gray-500">
                     {filteredData.length} {filteredData.length === 1 ? 'row' : 'rows'}
                   </span>
@@ -325,11 +322,6 @@ export default function TableWidget({
                   </svg>
                 </button>
               </div>
-            </div>
-            
-            {/* Last Updated */}
-            <div className="text-xs text-gray-500 mt-2">
-              Last updated: {formatLastUpdated(lastUpdated)}
             </div>
           </div>
 
@@ -477,6 +469,12 @@ export default function TableWidget({
               )}
             </div>
           )}
+
+          {/* Footer Info */}
+          <div className="flex gap-4 text-xs text-gray-500 mt-4 pt-3 border-t border-[#333]/30">
+            <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
+            <span>Refresh: {formatRefreshRate(refreshRate)}</span>
+          </div>
         </div>
 
         {/* Bottom Accent */}

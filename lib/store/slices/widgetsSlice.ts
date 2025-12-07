@@ -31,7 +31,8 @@ export interface Widget {
   data: StockData | null;
   rawData?: any; // Store complete API response for custom fields
   lastUpdated?: string; // Track last data update time
-  displayMode?: 'card' | 'table'; // Display mode: card or table
+  displayMode?: 'card' | 'table' | 'chart'; // Display mode: card, table, or chart
+  chartType?: 'candlestick' | 'linear'; // Chart type for chart display mode
 }
 
 interface WidgetsState {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import FieldSelector, { type SelectedFieldItem } from '@/components/FieldSelector';
+import { hasValidOHLCData, mapToOHLC } from '@/lib/utils/ohlcMapper';
 
 interface AddWidgetFormProps {
   onAddWidget: (
@@ -10,8 +11,9 @@ interface AddWidgetFormProps {
     symbol: string,
     refreshRate: number,
     selectedFields: SelectedFieldItem[],
-    displayMode: 'card' | 'table',
-    customApiUrl?: string
+    displayMode: 'card' | 'table' | 'chart',
+    customApiUrl?: string,
+    chartType?: 'candlestick' | 'linear'
   ) => void;
   onClose: () => void;
   initialData?: {
@@ -22,7 +24,8 @@ interface AddWidgetFormProps {
     refreshRate: string;
     selectedFields: SelectedFieldItem[];
     activeTab: TabType;
-    displayMode: 'card' | 'table';
+    displayMode: 'card' | 'table' | 'chart';
+    chartType?: 'candlestick' | 'linear';
   };
 }
 
@@ -36,12 +39,14 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
   const [symbol, setSymbol] = useState(initialData?.symbol || '');
   const [apiUrl, setApiUrl] = useState(initialData?.apiUrl || '');
   const [refreshRate, setRefreshRate] = useState(initialData?.refreshRate || '30');
-  const [displayMode, setDisplayMode] = useState<'card' | 'table'>(initialData?.displayMode || 'card');
+  const [displayMode, setDisplayMode] = useState<'card' | 'table' | 'chart'>(initialData?.displayMode || 'card');
+  const [chartType, setChartType] = useState<'candlestick' | 'linear'>(initialData?.chartType || 'candlestick');
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(!!initialData);
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [selectedFields, setSelectedFields] = useState<SelectedFieldItem[]>(initialData?.selectedFields || []);
   const [error, setError] = useState('');
+  const [ohlcValidationMessage, setOhlcValidationMessage] = useState<string>('');
 
   const isValidUrl = (url: string): boolean => {
     try {
@@ -130,6 +135,13 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
 
       setApiResponse(data);
       setIsConnected(true);
+      
+      // Validate OHLC data for chart mode
+      if (hasValidOHLCData(data)) {
+        setOhlcValidationMessage('OHLC Data available for Charts');
+      } else {
+        setOhlcValidationMessage('OHLC Data not available for Charts');
+      }
     } catch (err) {
       setError('Failed to connect to API');
       console.error(err);
@@ -174,8 +186,15 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       return;
     }
 
-    if (selectedFields.length === 0) {
+    // For chart mode, field selection is not required
+    if (displayMode !== 'chart' && selectedFields.length === 0) {
       setError('Please select at least one field to display');
+      return;
+    }
+
+    // Validate OHLC data for chart mode
+    if (displayMode === 'chart' && !hasValidOHLCData(apiResponse)) {
+      setError('Chart mode requires valid OHLC data format');
       return;
     }
 
@@ -186,7 +205,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
       rate,
       selectedFields,
       displayMode,
-      activeTab === 'api-url' ? apiUrl.trim() : undefined
+      activeTab === 'api-url' ? apiUrl.trim() : undefined,
+      displayMode === 'chart' ? chartType : undefined
     );
   };
 
@@ -343,7 +363,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               <label className="block text-sm font-medium text-gray-300 mb-3">
                 Display Mode <span className="text-[#ff4d4d]">*</span>
               </label>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -354,7 +374,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                     }
                   }}
                   disabled={isConnecting}
-                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     displayMode === 'card'
                       ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
                       : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
@@ -369,7 +389,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   type="button"
                   onClick={() => setDisplayMode('table')}
                   disabled={isConnecting}
-                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     displayMode === 'table'
                       ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
                       : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
@@ -380,20 +400,74 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   </svg>
                   Table
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setDisplayMode('chart')}
+                  disabled={isConnecting || (isConnected && !hasValidOHLCData(apiResponse))}
+                  className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                    displayMode === 'chart'
+                      ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
+                      : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                  } ${(isConnecting || (isConnected && !hasValidOHLCData(apiResponse))) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Chart
+                </button>
               </div>
               <p className="text-xs text-gray-500 mt-2">
                 {displayMode === 'card' 
                   ? 'Card view displays individual fields. Best for simple data structures.'
-                  : 'Table view displays array data in rows. Requires API response with array fields.'}
+                  : displayMode === 'table'
+                  ? 'Table view displays array data in rows. Requires API response with array fields.'
+                  : 'Chart view displays OHLC financial data. Requires valid candlestick data format.'}
               </p>
+              
+              {/* OHLC Validation Message */}
+              {isConnected && ohlcValidationMessage && (
+                <div className={`mt-2 text-xs p-2 rounded ${
+                  ohlcValidationMessage === 'OHLC Data available for Charts'
+                    ? 'bg-green-900/20 text-green-400 border border-green-500/30' 
+                    : 'bg-yellow-900/20 text-yellow-400 border border-yellow-500/30'
+                }`}>
+                  {ohlcValidationMessage}
+                </div>
+              )}
+              
+              {/* Chart Type Selection - Only show for chart mode */}
+              {displayMode === 'chart' && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Chart Type
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setChartType('candlestick')}
+                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
+                        chartType === 'candlestick'
+                          ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
+                          : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                      } cursor-pointer`}
+                    >
+                      Candlestick
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setChartType('linear')}
+                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
+                        chartType === 'linear'
+                          ? 'bg-[#00d4ff] text-[#0f0f1a] shadow-lg shadow-[#00d4ff]/20'
+                          : 'bg-[#0f0f1a] text-gray-400 hover:bg-[#1a1a2e] border border-[#333]'
+                      } cursor-pointer`}
+                    >
+                      Linear
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-3 text-[#ff4d4d] text-sm">
-                {error}
-              </div>
-            )}
 
             {/* Connect Button */}
             {!isConnected && (
@@ -413,8 +487,8 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
               </div>
             )}
 
-            {/* Field Selector - Shows after successful connection */}
-            {isConnected && apiResponse && (
+            {/* Field Selector - Shows after successful connection (not for chart mode) */}
+            {isConnected && apiResponse && displayMode !== 'chart' && (
               <div className="pt-4 border-t border-[#333]/30 animate-slideDown">
                 <FieldSelector
                   apiResponse={apiResponse}
@@ -422,6 +496,49 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   onFieldsChange={setSelectedFields}
                   displayMode={displayMode}
                 />
+              </div>
+            )}
+            
+            {/* Chart Mode Info/Error */}
+            {isConnected && apiResponse && displayMode === 'chart' && (
+              <div className="pt-4 border-t border-[#333]/30 animate-slideDown">
+                {hasValidOHLCData(apiResponse) ? (
+                  <div className="bg-[#0f0f1a]/50 rounded-lg p-4 border border-[#00d4ff]/20">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-[#00d4ff] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div>
+                        <h4 className="text-sm font-medium text-white mb-1">Chart Mode Enabled</h4>
+                        <p className="text-xs text-gray-400">
+                          Charts automatically display OHLC (Open, High, Low, Close) data from the API response. 
+                          No field selection is required. The chart will display all available time series data.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-[#2a1a1a] rounded-lg p-4 border border-[#ff4d4d]/50">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-[#ff4d4d] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <div>
+                        <h4 className="text-sm font-medium text-[#ff4d4d] mb-1">Valid Format Not Found</h4>
+                        <p className="text-xs text-gray-400">
+                          Charts display mode is not available. The API response does not contain valid OHLC (Open, High, Low, Close) time series data required for chart visualization.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-[#2a1a1a] border border-[#ff4d4d] rounded-lg p-3 text-[#ff4d4d] text-sm">
+                {error}
               </div>
             )}
 
@@ -455,7 +572,7 @@ export default function AddWidgetForm({ onAddWidget, onClose, initialData }: Add
                   <button
                     type="submit"
                     className="flex-1 px-4 py-3 bg-linear-to-r from-[#00ff88] to-[#00cc6a] text-[#0f0f1a] rounded-lg font-bold hover:from-[#00dd77] hover:to-[#00bb5e] transition-all shadow-lg shadow-[#00ff88]/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={selectedFields.length === 0}
+                    disabled={displayMode !== 'chart' && selectedFields.length === 0}
                   >
                     {initialData ? 'Update Widget' : 'Add Widget'}
                   </button>
